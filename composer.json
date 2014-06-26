@@ -1,0 +1,15 @@
+{
+    "name": "h1soft/hmvc",
+    "description": "PHP 5.3 MVC FRAMEWORK",
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "allen",
+            "email": "h@h1soft.net"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+
+    }
+}
