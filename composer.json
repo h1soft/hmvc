@@ -1,0 +1,27 @@
+{
+    "name": "hmvc/framework",
+    "description": "The HMVC Framework.",
+    "keywords": ["framework", "hmvc"],
+    "license": "MIT",
+    "homepage": "http://hmvc.cn",
+    "authors": [
+        {
+            "name": "Allen Niu",
+            "email": "allen@w4u.cn"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "ext-mbstring": "*",
+        "ext-openssl": "*",
+        "symfony/http-foundation": "*"
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-4": {
+            "hmvc\\": "src/hmvc/"
+        }
+    },
+    "minimum-stability": "dev"
+}

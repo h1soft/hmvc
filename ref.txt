@@ -1,0 +1,12 @@
+http://fuelphp.com/docs/classes/autoloader.html
+
+
+https://github.com/slimphp/Slim/
+
+https://github.com/laravel/framework
+
+
+
+http://medoo.in/
+
+https://github.com/jstewmc/php-helpers/blob/master/src/Str.php
