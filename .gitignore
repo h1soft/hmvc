@@ -39,6 +39,7 @@ Icon
 vendor
 composer.lock
 config
+assets
 cache
 bootstrap
 app
@@ -51,3 +52,4 @@ themes
 var
 upload
 crons
+ref.txt
