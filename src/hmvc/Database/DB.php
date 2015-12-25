@@ -101,7 +101,7 @@ class DB {
             call_user_func_array($callable, array($db, new Query($db)));
         } else if (is_string($callable)) {
             $db = Application::getInstance()->get('db');
-            return new Query($db->using($connectionName));
+            return new Query($db->using($callable));
         }
     }
 
