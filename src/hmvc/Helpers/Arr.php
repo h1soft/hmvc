@@ -38,6 +38,13 @@ namespace hmvc\Helpers;
  */
 class Arr {
 
+    /**
+     * 
+     * @param array $array
+     * @param string|int $key
+     * @param mixed $default
+     * @return mixed
+     */
     public static function get($array, $key, $default = null) {
         if (is_null($key)) {
             return $array;
@@ -54,6 +61,12 @@ class Arr {
         return $array;
     }
 
+    /**
+     * 
+     * @param array $array
+     * @param string|int $key
+     * @return boolean
+     */
     public static function has($array, $key) {
         if (empty($array) || is_null($key)) {
             return false;
@@ -70,6 +83,13 @@ class Arr {
         return true;
     }
 
+    /**
+     * 
+     * @param array $array
+     * @param string|int $key
+     * @param mixed $value
+     * @return mixed
+     */
     public static function set(&$array, $key, $value) {
         if (is_null($key)) {
             return $array = $value;
