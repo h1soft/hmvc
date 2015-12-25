@@ -79,11 +79,11 @@ function value($value) {
     return $value;
 }
 
-function xml_encode($mixed, $domElement = null, $DOMDocument = null) {
+function xmlEncode($mixed, $domElement = null, $DOMDocument = null) {
     if (is_null($DOMDocument)) {
         $DOMDocument = new DOMDocument;
         $DOMDocument->formatOutput = true;
-        xml_encode($mixed, $DOMDocument, $DOMDocument);
+        xmlEncode($mixed, $DOMDocument, $DOMDocument);
         echo $DOMDocument->saveXML();
     } else {
         if (is_array($mixed)) {
@@ -106,7 +106,7 @@ function xml_encode($mixed, $domElement = null, $DOMDocument = null) {
                     }
                 }
 
-                xml_encode($mixedElement, $node, $DOMDocument);
+                xmlEncode($mixedElement, $node, $DOMDocument);
             }
         } else {
             $domElement->appendChild($DOMDocument->createTextNode($mixed));
@@ -159,5 +159,17 @@ function arrayToObject($array) {
         return $object;
     } else {
         return FALSE;
+    }
+}
+
+function class_basename($classname) {
+    $classname = is_object($classname) ? get_class($classname) : $classname;
+    return basename(str_replace('\\', '/', $classname));
+}
+
+function pp() {
+    $params = func_get_args();
+    foreach ($params as $value) {
+        print_r($value);
     }
 }
