@@ -213,8 +213,16 @@ class Connection {
         return $result;
     }
 
-    public function fetch($fetch_style = PDO::FETCH_ASSOC) {
-        return $this->statement->fetch($fetch_style);
+    public function fetch($fetch_style = PDO::FETCH_ASSOC, $cursor_orientation = 'PDO::FETCH_ORI_NEXT', $cursor_offset = 0) {
+        return $this->statement->fetch($fetch_style, $cursor_orientation, $cursor_offset);
+    }
+
+    public function fetchObject($class_name = "stdClass", array $ctor_args = null) {
+        return $this->statement->fetchObject($class_name, $ctor_args);
+    }
+
+    public function fetchAll($fetch_style = PDO::FETCH_ASSOC, $class = NULL) {
+        return $this->statement->fetchAll($fetch_style, $class);
     }
 
     public function row($fetch_style = PDO::FETCH_ASSOC) {
