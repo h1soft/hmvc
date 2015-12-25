@@ -32,6 +32,21 @@
 namespace hmvc\Validation;
 
 /**
+  $validator = Validator::make(Request::data());
+  Validator::setDefaultMessage(array(
+  'required' => "{label}必须填写"
+  ));
+  $validator->separator = '||';
+  $validator->addRule('name', 'required||match{(allen|hello)}', array(
+  'required' => '用户名不能为空',
+  'match' => '用户名不合法'
+  ));
+  if ($validator->validate()) {
+
+  }
+ */
+
+/**
  * Description of Validator
  *
  * @author Administrator
@@ -197,7 +212,8 @@ class Validator {
         if ($this->context['required'] == false && strlen($this->fields[$fieldName]) == 0) {
             return true;
         }
-        filter_var($this->fields[$fieldName], FILTER_VALIDATE_BOOLEAN); {
+        filter_var($this->fields[$fieldName], FILTER_VALIDATE_BOOLEAN);
+        {
             $this->setError($fieldName, $this->getMessage($fieldName, 'bool'));
         }
     }
