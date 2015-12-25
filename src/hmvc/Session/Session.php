@@ -36,18 +36,34 @@ use Symfony\Component\HttpFoundation\Session\Session as SymfonySession;
 /**
  * Description of Session
  *
- * @author Administrator
+ * @author allen <allen@w4u.cn>
  */
 class Session extends SymfonySession {
 
+    /**
+     * 
+     * @param string $type (notice|error|success|warning|info)
+     * @param string $message
+     */
     public function addFlash($type, $message) {
         $this->getFlashBag()->add($type, $message);
     }
 
+    /**
+     * 
+     * @param string $type
+     * @param array $default
+     * @return string
+     */
     public function getFlash($type, array $default = array()) {
         return $this->getFlashBag()->get($type, $default);
     }
 
+    /**
+     * 
+     * @param string $type
+     * @return array
+     */
     public function hasFlash($type) {
         return $this->getFlashBag()->has($type);
     }
