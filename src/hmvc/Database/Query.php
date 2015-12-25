@@ -40,8 +40,10 @@ use hmvc\Database\Connection;
  */
 class Query {
 
+    protected $sqlType = 'SELECT';
     protected $query = array();
     protected $select = array();
+    protected $fields = array();
     protected $from = array();
     protected $where = array();
     protected $having = array();
@@ -106,22 +108,9 @@ class Query {
      * @return \hmvc\Database\Query
      */
     public function from($tables) {
-        if (is_string($tables) && strpos($tables, '(') !== false) {
-            $this->from[] = $this->db->tableName($tables);
-        } else {
-            if (!is_array($tables)) {
-                $tables = preg_split('/\s*,\s*/', trim($tables), -1, PREG_SPLIT_NO_EMPTY);
-                foreach ($tables as $i => $table) {
-                    if (strpos($table, '(') === false) {
-                        if (preg_match('/^(.*?)(?i:\s+as\s+|\s+)(.*)$/', $table, $matches)) {  // with alias
-                            $tables[$i] = $this->driver->quoteTableName($this->db->tableName($matches[1])) . ' ' . $this->driver->quoteTableName($matches[2]);
-                        } else {
-                            $tables[$i] = $this->driver->quoteTableName($this->db->tableName($table));
-                        }
-                    }
-                }
-                $this->from[] = implode(', ', $tables);
-            }
+        $tables = is_array($tables) ? $tables : func_get_args();
+        foreach ($tables as $table) {
+            $this->from[] = $this->db->tableName($table);
         }
         return $this;
     }
@@ -248,7 +237,20 @@ class Query {
      * @return string
      */
     public function getSQL() {
-        $sql = $this->prepareSelectString();
+        $sql = '';
+        switch ($this->sqlType) {
+            case 'SELECT':
+                $sql .= 'SELECT ' . $this->prepareSelectString() . $this->prepareFrom();
+                break;
+            case 'DELETE FROM':
+                $sql .= 'DELETE FROM ' . $this->prepareFrom();
+                break;
+            case 'UPDATE':
+                $sql .= 'UPDATE ' . $this->prepareFrom() . $this->prepareUpdateSet();
+                break;
+            default:
+                break;
+        }
         $sql .= $this->prepareJoinString();
         $sql .= $this->prepareWhereString();
         $sql .= $this->prepareGroupByString();
@@ -303,6 +305,25 @@ class Query {
     }
 
     /**
+     * update set
+     * @param type $name
+     * @param type $value
+     * @return \hmvc\Database\Query
+     */
+    public function set($name, $value = null) {
+        if (is_array($name)) {
+            foreach ($name as $key => $val) {
+                $this->fields[] = "$key=:$key";
+                $this->params[':' . $key] = $val;
+            }
+        } else {
+            $this->fields[] = "$name=:$name";
+            $this->params[':' . $name] = $value;
+        }
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function getParams() {
@@ -328,7 +349,15 @@ class Query {
         if (empty($this->select)) {
             $this->select("*");
         }
-        return "SELECT " . implode(", ", $this->select) . " FROM " . implode(", ", $this->from) . " ";
+        return implode(", ", $this->select) . " FROM ";
+    }
+
+    private function prepareFrom() {
+        return implode(", ", $this->from) . " ";
+    }
+
+    private function prepareUpdateSet() {
+        return ' SET ' . implode(",", $this->fields);
     }
 
     /**
@@ -364,7 +393,7 @@ class Query {
      */
     private function prepareWhereString() {
         if (!empty($this->where)) {
-            return "WHERE " . implode(" AND ", $this->where) . " ";
+            return " WHERE " . implode(" AND ", $this->where) . " ";
         }
         return '';
     }
@@ -461,11 +490,21 @@ class Query {
         return $this->db->insert($tableName, $columns);
     }
 
-    public function update($table, $columns, $conditions = '', $params = array()) {
+    public function update($table = NULL, $columns = NULL, $conditions = '', $params = array()) {
+        if (is_null($table)) {
+            $this->sqlType = 'UPDATE';
+            $this->execute();
+            return $this->db->rowCount();
+        }
         return $this->db->update($table, $columns, $conditions, $params);
     }
 
-    public function delete($table, $conditions = '', $params = array()) {
+    public function delete($table = NULL, $conditions = '', $params = array()) {
+        if (is_null($table)) {
+            $this->sqlType = 'DELETE FROM';
+            $this->execute();
+            return $this->db->rowCount();
+        }
         return $this->db->delete($table, $conditions, $params);
     }
 
