@@ -53,8 +53,8 @@ abstract class Container implements ContainerInterface {
             $object = new $className();
             if ($object instanceof \hmvc\Core\DefinitionInterface) {
                 $object = $object->factory();
-                $this->singleton($name, $object);
             }
+            $this->singleton($name, $object);
             return $object;
         }
         return NULL;
