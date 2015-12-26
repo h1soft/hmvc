@@ -36,24 +36,51 @@ use hmvc\Database\Connection;
 /**
  * Description of Query
  *
- * @author Administrator
+ * @author allen <allen@w4u.cn>
  */
 class Query {
-
+    /**
+     *
+     * @var string (SELECT|DELETE|UPDATE)
+     */
     protected $sqlType = 'SELECT';
     protected $query = array();
     protected $select = array();
     protected $fields = array();
+    /**
+     *
+     * @var array tables
+     */
     protected $from = array();
+    /**
+     *
+     * @var array wheres
+     */
     protected $where = array();
+    /**
+     *
+     * @var array  havings
+     */
     protected $having = array();
+    /**
+     *
+     * @var array joins
+     */
     protected $join = array();
     protected $params = array();
     protected $orderBy = array();
     protected $groupBy = array();
     protected $limit = 0;
     protected $offset = 0;
+    /**
+     *
+     * @var \PDO
+     */
     private $driver;
+    /**
+     *
+     * @var string SQL OPTION (EXPLAIN)
+     */
     protected $preoption = '';
 
     /**

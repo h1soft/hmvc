@@ -31,18 +31,18 @@
 
 namespace hmvc\Database;
 
-use PDO;
+//use PDO;
 use PDOStatement;
 
 /**
  * Description of Statement
  *
- * @author Administrator
+ * @author allen <allen@w4u.cn>
  */
 class Statement extends PDOStatement {
 
     protected function __construct() {
-        $this->setFetchMode(PDO::FETCH_CLASS, '\hmvc\Database\Row');
+//        $this->setFetchMode(PDO::FETCH_CLASS, '\hmvc\Database\Row');
     }
 
     public function execute($input_parameters = null) {

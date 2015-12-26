@@ -34,7 +34,7 @@ namespace hmvc\Database;
 /**
  * Description of Raw
  *
- * @author Administrator
+ * @author allen <allen@w4u.cn>
  */
 class Raw {
 

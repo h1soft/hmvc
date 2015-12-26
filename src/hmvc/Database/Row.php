@@ -34,10 +34,8 @@ namespace hmvc\Database;
 /**
  * Description of Row
  *
- * @author Administrator
+ * @author allen <allen@w4u.cn>
  */
 class Row {
-
     
-
 }
