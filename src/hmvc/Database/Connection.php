@@ -42,9 +42,28 @@ use hmvc\Helpers\Arr;
  */
 class Connection {
 
+    /**
+     *
+     * @var array params
+     */
     protected $params;
+
+    /**
+     *
+     * @var array PDO attrs
+     */
     protected $attributes = array();
-    protected $connections = array();
+
+    /**
+     *
+     * @var array connections
+     */
+    protected static $connections = array();
+
+    /**
+     *
+     * @var string default connection
+     */
     protected $connectionName;
 
     /**
@@ -64,10 +83,35 @@ class Connection {
      * @var \PDOStatement
      */
     public $statement;
+
+    /**
+     *
+     * @var int rowcount
+     */
     protected $rowcount;
+
+    /**
+     *
+     * @var boolean Auto Connection
+     */
     protected $autoConnect = false;
+
+    /**
+     *
+     * @var boolean is Connection
+     */
     protected $isConnected = false;
+
+    /**
+     *
+     * @var array sql history
+     */
     protected $sqlCommandHistory = array();
+
+    /**
+     *
+     * @var array PDO Params
+     */
     protected $queryParams = array();
 
     public function __construct($params, $connectionName = 'default') {
@@ -101,7 +145,7 @@ class Connection {
             default:
                 throw new \Exception("{$driver} driver doesn't support");
         }
-        $this->connections[$this->connectionName] = $this;
+        static::$connections[$this->connectionName] = $this;
         $this->isConnected = true;
     }
 
@@ -112,15 +156,19 @@ class Connection {
      * @throws \Exception
      */
     public function using($connectionName) {
-        if (array_key_exists($connectionName, $this->connections)) {
-            return $this->connections[$connectionName];
+        if (array_key_exists($connectionName, static::$connections)) {
+            return static::$connections[$connectionName];
         }
         $params = Config::get('database.connections.' . $connectionName);
         if (is_null($params) || !is_array($params)) {
             throw new \Exception('config/database.php No configuration database');
         }
-        $this->connections[$connectionName] = new Connection($params, $connectionName);
-        return $this->connections[$connectionName];
+        static::$connections[$connectionName] = new Connection($params, $connectionName);
+        return static::$connections[$connectionName];
+    }
+
+    public function on($connectionName) {
+        return $this->using($connectionName);
     }
 
     public function getDriver() {
@@ -506,12 +554,11 @@ class Connection {
      * @throws \Exception
      */
     public static function getConnection($connectionName = 'default') {
-        $default = Config::get('database.default', $connectionName);
-        $params = Config::get('database.connections.' . $default);
+        $params = Config::get('database.connections.' . $connectionName);
         if (is_null($params) || !is_array($params)) {
             throw new \Exception('configuration: config/database.php not found!!!');
         }
-        return new Connection($params, $default);
+        return new Connection($params, $connectionName);
     }
 
     private function prepareConditions($conditions, $params = array()) {

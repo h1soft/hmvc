@@ -43,11 +43,7 @@ class ConnectionFactory implements DefinitionInterface {
 
     public function factory() {
         $default = Config::get('database.default', 'default');
-        $params = Config::get('database.connections.' . $default);
-        if (is_null($params) || !is_array($params)) {
-            throw new \Exception('configuration: config/database.php not found!!!');
-        }
-        return new Connection($params, $default);
+        return Connection::getConnection($default);
     }
 
 }
