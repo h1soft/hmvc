@@ -53,10 +53,21 @@ class Http {
         $this->port = $port;
     }
 
+    /**
+     * 
+     * @param string $host
+     * @param int $port
+     * @return \hmvc\Net\Http
+     */
     public static function make($host, $port = 80) {
         return new Http($host, $port);
     }
-
+    /**
+     * 
+     * @param string $path
+     * @param type $data
+     * @return boolean
+     */
     function get($path, $data = false) {
         $this->path = $path;
         $this->method = 'GET';
@@ -66,6 +77,12 @@ class Http {
         return $this->doRequest();
     }
 
+    /**
+     * post
+     * @param string $path
+     * @param type $data
+     * @return boolean
+     */
     function post($path, $data) {
         $this->path = $path;
         $this->method = 'POST';
@@ -329,7 +346,11 @@ class Http {
         $this->debug = $boolean;
     }
 
-    // "Quick" static methods
+    /**
+     * Quick Get
+     * @param type $url
+     * @return boolean
+     */
     function quickGet($url) {
         $bits = parse_url($url);
         $host = $bits['host'];
@@ -338,7 +359,7 @@ class Http {
         if (isset($bits['query'])) {
             $path .= '?' . $bits['query'];
         }
-        $client = new HttpClient($host, $port);
+        $client = new Http($host, $port);
         if (!$client->get($path)) {
             return false;
         } else {
@@ -346,6 +367,12 @@ class Http {
         }
     }
 
+    /**
+     * Quick Post Data
+     * @param string $url
+     * @param type $data
+     * @return boolean|string
+     */
     function quickPost($url, $data) {
         $bits = parse_url($url);
         $host = $bits['host'];
@@ -374,5 +401,3 @@ class Http {
     }
 
 }
-
-?>
