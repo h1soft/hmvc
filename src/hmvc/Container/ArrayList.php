@@ -19,52 +19,142 @@ class ArrayList implements \ArrayAccess {
      * @var array
      * @access private
      */
-    protected $_hdata = array();
+    protected $element = array();
 
-    /**
-     * Get a _hdata by key
-     *
-     * @param string The key _hdata to retrieve
-     * @access public
-     */
-    public function __get($key) {
-        if (!isset($this->_hdata[$key])) {
-            return NULL;
+    public function __construct($elements = array()) {
+        if (!empty($elements)) {
+            $this->element = $elements;
         }
-        return $this->_hdata[$key];
+    }
+
+    public function toJson() {
+        return json_encode($this->element);
     }
 
     /**
-     * Assigns a value to the specified _hdata
+     * 获取列表长度
+     * @access public
+     * @return integer
+     */
+    public function size() {
+        return count($this->element);
+    }
+
+    /**
+     * 判断元素是否为空
+     * @access public
+     * @return boolean
+     */
+    public function isEmpty() {
+        return empty($this->element);
+    }
+
+    /**
+     * 是否包含某个元素
+     * @access public
+     * @param mixed $element  查找元素
+     * @return string
+     */
+    public function contains($element) {
+        return (array_search($element, $this->element) !== false );
+    }
+
+    /**
+     * 清除所有元素
+     * @access public
+     */
+    public function clear() {
+        $this->element = array();
+    }
+
+    /**
+     * 增加元素
+     * @access public
+     * @param mixed $element  要添加的元素
+     * @return boolean
+     */
+    public function add($element) {
+        return (array_push($this->element, $element)) ? true : false;
+    }
+
+    //
+    public function unshift($element) {
+        return (array_unshift($this->element, $element)) ? true : false;
+    }
+
+    //
+    public function pop() {
+        return array_pop($this->element);
+    }
+
+    public function getIterator() {
+        return new ArrayObject($this->element);
+    }
+
+    // 列表排序    
+    public function ksort() {
+        ksort($this->element);
+    }
+
+    // 列表排序
+    public function asort() {
+        asort($this->element);
+    }
+
+    // 逆向排序
+    public function rsort() {
+        rsort($this->element);
+    }
+
+    // 自然排序
+    public function natsort() {
+        natsort($this->element);
+    }
+
+    /**
+     * Get a element by key
+     *
+     * @param string The key element to retrieve
+     * @access public
+     */
+    public function __get($key) {
+        if (!isset($this->element[$key])) {
+            return NULL;
+        }
+        return $this->element[$key];
+    }
+
+    /**
+     * Assigns a value to the specified element
      * 
-     * @param string The _hdata key to assign the value to
+     * @param string The element key to assign the value to
      * @param mixed  The value to set
      * @access public 
      */
     public function __set($key, $value) {
-        $this->_hdata[$key] = $value;
+        $this->element[$key] = $value;
     }
 
     /**
-     * Whether or not an _hdata exists by key
+     * Whether or not an element exists by key
      *
-     * @param string An _hdata key to check for
+     * @param string An element key to check for
      * @access public
      * @return boolean
      * @abstracting ArrayAccess
      */
     public function __isset($key) {
-        return isset($this->_hdata[$key]);
+        return isset($this->element[$key]);
     }
 
     /**
-     * Unsets an _hdata by key
+     * Unsets an element by key
      *
      * @param string The key to unset
      * @access public
      */
     public function __unset($key) {
-        unset($this->_hdata[$key]);
+        unset($this->element[$key]);
     }
 
     /**
@@ -77,9 +167,9 @@ class ArrayList implements \ArrayAccess {
      */
     public function offsetSet($offset, $value) {
         if (is_null($offset)) {
-            $this->_hdata[] = $value;
+            $this->element[] = $value;
         } else {
-            $this->_hdata[$offset] = $value;
+            $this->element[$offset] = $value;
         }
     }
 
@@ -92,7 +182,7 @@ class ArrayList implements \ArrayAccess {
      * @abstracting ArrayAccess
      */
     public function offsetExists($offset) {
-        return isset($this->_hdata[$offset]);
+        return isset($this->element[$offset]);
     }
 
     /**
@@ -104,7 +194,7 @@ class ArrayList implements \ArrayAccess {
      */
     public function offsetUnset($offset) {
         if ($this->offsetExists($offset)) {
-            unset($this->_hdata[$offset]);
+            unset($this->element[$offset]);
         }
     }
 
@@ -117,7 +207,7 @@ class ArrayList implements \ArrayAccess {
      * @abstracting ArrayAccess
      */
     public function offsetGet($offset) {
-        return $this->offsetExists($offset) ? $this->_hdata[$offset] : null;
+        return $this->offsetExists($offset) ? $this->element[$offset] : null;
     }
 
 }
