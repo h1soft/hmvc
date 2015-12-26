@@ -146,13 +146,13 @@ abstract class Model implements ArrayAccess {
             $this->db->insert($this->getTable(), $this->getAttributes());
             $this->setNewRecord(false);
             $this->setAttribute($this->getPrimaryKey(), $this->db->lastInsertId());
-            return $this->db->rowCount();
         } else {
             $pkey = $this->getPrimaryKey();
             $this->from($this->getTable())->set($this->getAttributes())
                     ->where($pkey . "=:" . $pkey, array(':' . $pkey => $this->getKeyValue()))
                     ->update();
         }
+        return $this;
     }
 
     /**
@@ -164,7 +164,8 @@ abstract class Model implements ArrayAccess {
         if ($this->isNewRecord) {
             return $this->db->insert($this->getTable(), $attributes);
         }
-        return $this->fill($attributes)->save();
+        $this->fill($attributes)->save();
+        return $this;
     }
 
     /**
