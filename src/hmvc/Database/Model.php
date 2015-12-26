@@ -44,7 +44,7 @@ abstract class Model implements ArrayAccess {
      *
      * @var \hmvc\Database\Connection
      */
-    protected $db;
+    private $db;
 
     /**
      *
@@ -70,16 +70,29 @@ abstract class Model implements ArrayAccess {
      */
     public $isNewRecord = false;
 
+    /**
+     * Table Attributes
+     * @param array $attributes
+     */
     public function __construct(array $attributes = array()) {
-        $this->db = Connection::getConnection();
+        $this->db = app()->get('db');
         $this->fill($attributes);
     }
 
+    /**
+     * Set New Record
+     * @param boolean $flag
+     * @return \hmvc\Database\Model
+     */
     public function setNewRecord($flag) {
         $this->isNewRecord = $flag;
         return $this;
     }
 
+    /**
+     * Get TableName or Class Basename
+     * @return string Table Name
+     */
     public function getTable() {
         if (isset($this->table)) {
             return $this->table;
@@ -87,20 +100,38 @@ abstract class Model implements ArrayAccess {
         return class_basename($this);
     }
 
+    /**
+     * Set table name
+     * @param string $table
+     * @return \hmvc\Database\Model
+     */
     public function setTable($table) {
         $this->table = $table;
         return $this;
     }
 
+    /**
+     * Get PrimaryKey Name
+     * @return string
+     */
     public function getKeyName() {
         return $this->primaryKey;
     }
 
+    /**
+     * Set PrimaryKey
+     * @param string $key
+     * @return \hmvc\Database\Model
+     */
     public function setKeyName($key) {
         $this->primaryKey = $key;
         return $this;
     }
 
+    /**
+     * 
+     * @return int PrimaryKey Value
+     */
     public function getKeyValue() {
         return $this->getAttribute($this->getPrimaryKey());
     }
@@ -113,12 +144,22 @@ abstract class Model implements ArrayAccess {
     public function save() {
         if ($this->isNewRecord) {
             $this->db->insert($this->getTable(), $this->getAttributes());
+            $this->setNewRecord(false);
+            $this->setAttribute($this->getPrimaryKey(), $this->db->lastInsertId());
             return $this->db->rowCount();
         } else {
-            $this->from($this->getTable())->set($this->getAttributes())->where("Id=:primary", array(':primary' => $this->getKeyValue()))->update();
+            $pkey = $this->getPrimaryKey();
+            $this->from($this->getTable())->set($this->getAttributes())
+                    ->where($pkey . "=:" . $pkey, array(':' . $pkey => $this->getKeyValue()))
+                    ->update();
         }
     }
 
+    /**
+     * Update Table
+     * @param array $attributes
+     * @return type
+     */
     public function update(array $attributes = array()) {
         if ($this->isNewRecord) {
             return $this->db->insert($this->getTable(), $attributes);
@@ -126,6 +167,11 @@ abstract class Model implements ArrayAccess {
         return $this->fill($attributes)->save();
     }
 
+    /**
+     * fill attributes
+     * @param array $attributes
+     * @return \hmvc\Database\Model
+     */
     public function fill(array $attributes = array()) {
         foreach ($attributes as $key => $value) {
             $this->attributes[$key] = $value;
@@ -133,10 +179,21 @@ abstract class Model implements ArrayAccess {
         return $this;
     }
 
+    public function destory() {
+        $id = $this->getKeyValue();
+        if (!$id) {
+            return false;
+        }
+        $pkey = $this->getPrimaryKey();
+        return $this->db->delete($this->getTable(), $pkey . '=:' . $pkey, array(
+                    $pkey => $id
+        ));
+    }
+
     /**
      * 
      * @param array|int $ids
-     * @return Model
+     * @return \hmvc\Database\Model|array
      */
     public static function find($ids) {
         $ids = is_array($ids) ? $ids : func_get_args();
@@ -182,7 +239,7 @@ abstract class Model implements ArrayAccess {
      */
     public static function using($connection = 'default') {
         $model = new static;
-        $model->db = Connection::getConnection($connection);
+        $model->setConnection(Connection::getConnection($connection));
         return $model;
     }
 
