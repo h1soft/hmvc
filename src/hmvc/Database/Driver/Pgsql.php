@@ -37,9 +37,11 @@ use hmvc\Database\Driver;
 /**
  * Description of Mysqli
  *
- * @author Administrator
+ * @author allen <allen@w4u.cn>
  */
 class Pgsql extends PDO implements Driver {
+
+    const PDO_STATEMENT_WRAPPER_CLASS = '\\hmvc\\Database\\Statement';
 
     public function __construct($params, $options = array()) {
         $dbname = array_get($params, 'dbname', 'test');
@@ -56,7 +58,7 @@ class Pgsql extends PDO implements Driver {
     }
 
     public function getName() {
-        return 'pdo_mysql';
+        return 'pdo_pgsql';
     }
 
     public function begin() {

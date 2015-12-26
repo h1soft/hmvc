@@ -37,7 +37,7 @@ use hmvc\Database\Driver;
 /**
  * Description of Mysql
  *
- * @author Administrator
+ * @author allen <allen@w4u.cn>
  */
 class Mysql extends PDO implements Driver {
 

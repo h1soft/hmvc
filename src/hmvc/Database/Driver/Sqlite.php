@@ -37,9 +37,11 @@ use hmvc\Database\Driver;
 /**
  * Description of Mysqli
  *
- * @author Administrator
+ * @author allen <allen@w4u.cn>
  */
 class Sqlite extends PDO implements Driver {
+
+    const PDO_STATEMENT_WRAPPER_CLASS = '\\hmvc\\Database\\Statement';
 
     public function __construct($params, $options = array()) {
         $dbname = array_get($params, 'database', 'test.sqlite');
@@ -48,11 +50,11 @@ class Sqlite extends PDO implements Driver {
         if (empty($options)) {
             $options[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES $charset";
         }
-        parent::__construct($dsn, $username, $passwd, $options);
+        parent::__construct($dsn);
     }
 
     public function getName() {
-        return 'pdo_mysql';
+        return 'pdo_sqlite';
     }
 
     public function begin() {
