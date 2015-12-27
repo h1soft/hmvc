@@ -45,19 +45,22 @@ class View implements ArrayAccess {
     protected $path;
 
     public static function make($templateName = '') {
-        
+        echo \hmvc\Core\Config::get('view.path');
     }
 
     public function render() {
         
     }
 
-    public function renderString() {
-        
+    public static function renderString($data) {
+        $response = new \hmvc\Http\Response($data, 200);
+//        $response->send();
+        return $response;
     }
 
-    public function renderJSON() {
-        
+    public static function renderJSON($data) {
+        $response = new \hmvc\Http\Response(json_encode($data));
+        $response->send();
     }
 
     public function renderXML() {
