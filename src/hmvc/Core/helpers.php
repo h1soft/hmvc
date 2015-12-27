@@ -51,6 +51,14 @@ function config_path() {
     return app()->basePath() . DIRECTORY_SEPARATOR . app()->configPath();
 }
 
+function assets_path() {
+    return app()->basePath() . DIRECTORY_SEPARATOR . app()->assetsPath();
+}
+
+function resources_path() {
+    return app()->basePath() . DIRECTORY_SEPARATOR . app()->resourcesPath();
+}
+
 function e($html) {
     return htmlentities($html, ENT_QUOTES, 'UTF-8', false);
 }
