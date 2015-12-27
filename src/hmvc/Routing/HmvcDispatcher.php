@@ -32,9 +32,10 @@
 namespace hmvc\Routing;
 
 use ReflectionMethod;
-use ReflectionException;
 use Exception;
 use hmvc\Events\Event;
+use hmvc\Http\Response;
+use hmvc\Http\JsonResponse;
 
 /**
  * Description of HmvcDispatcher
@@ -90,7 +91,7 @@ class HmvcDispatcher {
         ob_start();
         $response = $this->callAction();
         $content = ob_get_clean();
-        if ($response instanceof \hmvc\Http\Response) {
+        if ($response instanceof Response || $response instanceof JsonResponse) {
             return $response;
         } else {
             $response = \hmvc\Http\Response::create($content, 200)->prepare($this->request);
