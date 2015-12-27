@@ -39,5 +39,27 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
  * @author Administrator
  */
 class Response extends SymfonyResponse {
-    
+
+    /**
+     * 
+     * @param type $content
+     * @param type $status
+     * @param type $headers
+     * @return \hmvc\Http\Response
+     */
+    public static function make($content = '', $status = 200, $headers = array()) {
+        return new Response($content, $status, $headers);
+    }
+
+    /**
+     * 
+     * @param array|string $content
+     * @param int $status
+     * @param array $headers
+     * @return \hmvc\Http\JsonResponse
+     */
+    public static function json($content = '', $status = 200, $headers = array()) {
+        return JsonResponse::make($content, $status, $headers);
+    }
+
 }

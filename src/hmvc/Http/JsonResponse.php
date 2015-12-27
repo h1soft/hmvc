@@ -31,13 +31,34 @@
 
 namespace hmvc\Http;
 
-use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Symfony\Component\HttpFoundation\JsonResponse as SymfonyJsonResponse;
 
 /**
- * Description of Response
+ * Package hmvc\Http  JsonResponse
  *
- * @author Administrator
+ * @author allen <allen@w4u.cn>
  */
-class ResponseJson extends SymfonyResponse {
-    
+class JsonResponse extends SymfonyJsonResponse {
+
+    /**
+     * 
+     * @param type $data
+     * @param type $status
+     * @param type $headers
+     * @return \hmvc\Http\JsonResponse
+     */
+    public static function make($data = null, $status = 200, $headers = array()) {
+        return new JsonResponse($data, $status, $headers);
+    }
+
+    /**
+     * 
+     * @param string $name callback
+     * @return \hmvc\Http\JsonResponse
+     */
+    public function callback($name) {
+        $this->setCallback($name);
+        return $this;
+    }
+
 }
