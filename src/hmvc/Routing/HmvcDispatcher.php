@@ -35,7 +35,7 @@ use ReflectionMethod;
 use Exception;
 use hmvc\Events\Event;
 use hmvc\Http\Response;
-use hmvc\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 /**
  * Description of HmvcDispatcher
@@ -91,10 +91,10 @@ class HmvcDispatcher {
         ob_start();
         $response = $this->callAction();
         $content = ob_get_clean();
-        if ($response instanceof Response || $response instanceof JsonResponse) {
-            return $response;
+        if ($response instanceof SymfonyResponse) {
+            $response->prepare($this->request);
         } else {
-            $response = \hmvc\Http\Response::create($content, 200)->prepare($this->request);
+            $response = Response::create($content, 200)->prepare($this->request);
         }
         return $response;
     }
