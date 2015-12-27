@@ -38,9 +38,13 @@ use hmvc\Container\Container;
 function app() {
     return Container::getInstance();
 }
-
-function base_path() {
-    return app()->basePath();
+/**
+ * BasePath
+ * @param type $path
+ * @return string basePath
+ */
+function base_path($path = '') {
+    return app()->basePath() . DIRECTORY_SEPARATOR . $path;
 }
 
 function storage_path() {
