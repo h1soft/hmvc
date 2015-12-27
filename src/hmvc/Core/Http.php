@@ -31,6 +31,7 @@
 
 namespace hmvc\Core;
 
+use Exception;
 use hmvc\Http\Request;
 use hmvc\Routing\Router;
 use hmvc\Events\Event;
@@ -56,10 +57,14 @@ class Http implements KernelInterface {
         Event::send('system.init');
     }
 
+    /**
+     * 
+     * @return hmvc\Http\Response
+     */
     public function dispatch() {
         Event::send('system.router');
-        if ($this->router->isHMVC() && $this->router->hmvcDispatch($this->request->getPathInfo())) {
-            return false;
+        if ($this->router->isHMVC()) {
+            return $this->router->hmvcDispatch($this->request->getPathInfo());
         }
         $matchedRoutes = $this->router->getMatchedRoutes($this->request->getMethod(), $this->request->getPathInfo());
         $dispatched = null;
@@ -69,16 +74,15 @@ class Http implements KernelInterface {
                 if ($dispatched) {
                     break;
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 continue;
             }
         }
         if (!$dispatched) {
-//            throw new \Exception('not found');
             trigger_error('not found');
-//            echo 'not found';
         }
         Event::send('system.routed');
+        return $dispatched;
     }
 
     public function getName() {
