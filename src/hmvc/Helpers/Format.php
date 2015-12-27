@@ -19,8 +19,8 @@
 
 
 
- * This file is part of the hmvc package.
- * (w) http://www.hmvc.cn
+ * This file is part of the H1Cart package.
+ * (w) http://www.h1cart.com
  * (c) Allen Niu <h@h1soft.net>
 
  * For the full copyright and license information, please view the LICENSE
@@ -29,12 +29,46 @@
 
  */
 
-namespace hmvc\Net;
+namespace hmvc\Helpers;
 
 /**
- * Description of Curl
+ * Description of Format
  *
- * @author Administrator
+ * @author allen <allen@w4u.cn>
  */
-class Curl {
+class Format {
+
+    /**
+     * byte格式化
+     * @param type $size
+     * @return type
+     */
+    public static function FileSize($size) {
+        $units = array('B', 'KB', 'MB', 'GB', 'TB');
+        $u = 0;
+        while ((round($size / 1024) > 0) && ($u < 4)) {
+            $size = $size / 1024;
+            $u++;
+        }
+        return (number_format($size, 0) . " " . $units[$u]);
+    }
+
+    /**
+     * 分转元
+     * @param type $fen
+     * @return type
+     */
+    public static function FenToYuan($fen = 0) {
+        return number_format($fen / 100, 2);
+    }
+
+    /**
+     * 元转分
+     * @param type $yuan
+     * @return type
+     */
+    public static function YuanToFen($yuan = 0) {
+        return intval($yuan * 100);
+    }
+
 }

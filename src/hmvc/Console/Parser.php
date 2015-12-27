@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+<<<<<<< HEAD:src/hmvc/Net/Curl.php
 <?php
 
 /*
@@ -30,25 +30,14 @@
 
  */
 
-namespace hmvc\Database;
+namespace hmvc\Net;
 
 /**
- * Description of Raw
+ * Description of Curl
  *
  * @author Administrator
  */
-class Raw {
-
-    public $raw;
-
-    public function __construct($rawString) {
-        $this->raw = $rawString;
-    }
-
-    public function __toString() {
-        return $this->raw;
-    }
-
+class Curl {
 }
 =======
 <?php
@@ -82,24 +71,14 @@ class Raw {
 
  */
 
-namespace hmvc\Database;
+namespace hmvc\Console;
 
 /**
- * Description of Raw
+ * Description of Parser
  *
- * @author allen <allen@w4u.cn>
+ * @author Administrator
  */
-class Raw {
-
-    public $raw;
-
-    public function __construct($rawString) {
-        $this->raw = $rawString;
-    }
-
-    public function __toString() {
-        return $this->raw;
-    }
-
+class Parser {
+    //put your code here
 }
->>>>>>> origin/master
+>>>>>>> origin/master:src/hmvc/Console/Parser.php
