@@ -426,8 +426,15 @@ class Route {
             call_user_func_array($mw, array($this));
         }
         app()->request->_setParams($this->getParams());
-        $return = call_user_func_array($this->getCallable(), array_values($this->getParams()));
-        return ($return === false) ? false : true;
+        ob_start();
+        $response = call_user_func_array($this->getCallable(), array_values($this->getParams()));
+        $content = ob_end_clean();
+        if ($response instanceof \hmvc\Http\Response) {
+            return $response;
+        } else {
+            $response = \hmvc\Http\Response::create($content, 200)->prepare($this->request);
+        }
+        return $response;
     }
 
 }

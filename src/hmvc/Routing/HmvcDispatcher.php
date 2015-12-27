@@ -87,9 +87,15 @@ class HmvcDispatcher {
 
     public function dispatch() {
         $this->parseRequest();
-        $this->callAction();
-        Event::send('system.routed');
-        return true;
+        ob_start();
+        $response = $this->callAction();
+        $content = ob_get_clean();
+        if ($response instanceof \hmvc\Http\Response) {
+            return $response;
+        } else {
+            $response = \hmvc\Http\Response::create($content, 200)->prepare($this->request);
+        }
+        return $response;
     }
 
     private function parseRequest() {
@@ -113,7 +119,7 @@ class HmvcDispatcher {
                 throw new Exception("not found");
             }
         } else {
-            throw new Exception("Controller:{$className} not found");
+            throw new Exception("not found");
         }
     }
 
@@ -133,16 +139,19 @@ class HmvcDispatcher {
         $this->matches('/' . $route);
         $this->request->_setParams($this->params);
         $controller->beforeAction();
+        $response = false;
         if ($controllerMethod->getNumberOfParameters() > 0) {
             $parameters = array();
             foreach ($controllerMethod->getParameters() as $param) {
                 $parameters[$param->getName()] = array_get($this->params, $param->getName(), $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null );
             }
-            $controllerMethod->invokeArgs($controller, $parameters);
+            $response = $controllerMethod->invokeArgs($controller, $parameters);
         } else {
-            $controllerMethod->invoke($controller);
+            $response = $controllerMethod->invoke($controller);
         }
         $controller->afterAction();
+        Event::send('system.routed');
+        return $response;
     }
 
     private function getDefaultMethod() {

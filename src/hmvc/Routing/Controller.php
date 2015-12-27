@@ -33,7 +33,6 @@ namespace hmvc\Routing;
 
 use \Exception;
 use hmvc\Core\Application;
-use hmvc\Core\Definition;
 
 /**
  * Description of Controller
