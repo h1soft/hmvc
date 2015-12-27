@@ -33,7 +33,7 @@ namespace hmvc\Image;
 
 /**
  * Description of Captcha
- *
+ * https://code.google.com/p/cool-php-captcha/
  * @author Administrator
  */
 class Captcha {
