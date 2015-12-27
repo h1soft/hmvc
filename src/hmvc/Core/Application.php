@@ -58,13 +58,30 @@ class Application extends Container {
      * @var string 代码目录
      */
     protected $sourcePath = 'app';
+
+    /**
+     *
+     * @var string config
+     */
     protected $configPath = 'config';
 
     /**
      *
      * @var string 存储目录
      */
-    protected $storagePath = '';
+    protected $storagePath = 'storage';
+
+    /**
+     *
+     * @var string assets
+     */
+    protected $assetsPath = 'assets';
+
+    /**
+     *
+     * @var string Resources
+     */
+    protected $resourcesPath = 'resources';
 
     /**
      * @var string 环境类型
@@ -72,8 +89,8 @@ class Application extends Container {
     protected $environment = 'production';
 
     public function __construct($basePath = null) {
-        set_error_handler("hmvc_error");
-        set_exception_handler("hmvc_exceptionHandler");
+        set_error_handler("hmvcError");
+        set_exception_handler("hmvcExceptionHandler");
         $this->basePath = $basePath;
         static::setInstance($this);
         $this->set('app', $this);
@@ -121,6 +138,14 @@ class Application extends Container {
         return $this->storagePath;
     }
 
+    public function assetsPath() {
+        return $this->assetsPath;
+    }
+
+    public function resourcesPath() {
+        return $this->resourcesPath;
+    }
+
     public function setBasePath($basePath) {
         $this->basePath = $basePath;
         return $this;
@@ -136,22 +161,32 @@ class Application extends Container {
         return $this;
     }
 
+    public function setAssetsPath($assetsPath) {
+        $this->assetsPath = $assetsPath;
+        return $this;
+    }
+
+    public function setResourcesPath($resourcesPath) {
+        $this->resourcesPath = $resourcesPath;
+        return $this;
+    }
+
     public function setEnvironment($environment) {
         $this->environment = $environment;
         return $this;
     }
-    
+
     /**
      * 
      * @param int $type HTTP_KERNEL
-     * @return hmvc\Core\KernelInterface
+     * @return hmvc\Core\Http
      */
     public function handle($type = Application::HTTP_KERNEL) {
         $kernel = null;
         if ($type == Application::HTTP_KERNEL) {
             $kernel = new Http($this);
         } else {
-            
+            $kernel = new Console($this);
         }
         $this->singleton('kernel', $kernel);
         return $kernel;
