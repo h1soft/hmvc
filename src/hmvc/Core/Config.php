@@ -58,13 +58,23 @@ class Config {
                 static::$data[$name] = include $configFileName;
             }
         }
-        return static::$data[$name];
+        return $this;
     }
 
+    /**
+     * 
+     * @return array
+     */
     public static function all() {
         return static::$data;
     }
 
+    /**
+     * 
+     * @param string $name
+     * @param array|string $default
+     * @return array|string
+     */
     public static function get($name, $default = NULL) {
         $names = explode('.', $name);
         if (isset($names[0]) && !Arr::has(static::$data, $names[0])) {
@@ -73,16 +83,34 @@ class Config {
         return Arr::get(static::$data, $name, $default);
     }
 
+    /**
+     * 
+     * @param string $name
+     * @param array|string $value
+     * @return \hmvc\Core\Config
+     */
     public static function set($name, $value = array()) {
         Arr::set(static::$data, $name, $value);
+        return $this;
     }
 
+    /**
+     * 
+     * @param string $name
+     * @return array|string
+     */
     public static function has($name) {
         return Arr::has(static::$data, $name);
     }
 
+    /**
+     * Remove Config Item
+     * @param string $name
+     * @return \hmvc\Core\Config
+     */
     public static function remove($name) {
         Arr::set(static::$data, $name, array());
+        return $this;
     }
 
 }
