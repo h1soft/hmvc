@@ -127,7 +127,7 @@ function get_default($value, $default = NULL) {
     return $default;
 }
 
-function hmvc_error($code, $message, $file, $line) {
+function hmvcError($code, $message, $file, $line) {
     if (0 == error_reporting()) {
         return;
     }
@@ -136,13 +136,18 @@ function hmvc_error($code, $message, $file, $line) {
     }
 }
 
-function hmvc_exceptionHandler($exception) {
+function hmvcExceptionHandler($exception) {
     if (0 == error_reporting()) {
         return;
     }
     hmvc\Core\StackTrace::exceptionError($exception);
 }
 
+/**
+ * array to object
+ * @param type $array
+ * @return boolean|\stdClass
+ */
 function arrayToObject($array) {
     if (!is_array($array)) {
         return $array;
@@ -162,11 +167,19 @@ function arrayToObject($array) {
     }
 }
 
+/**
+ * get classname
+ * @param type $classname
+ * @return string
+ */
 function class_basename($classname) {
     $classname = is_object($classname) ? get_class($classname) : $classname;
     return basename(str_replace('\\', '/', $classname));
 }
 
+/**
+ * dump objects
+ */
 function pp() {
     $params = func_get_args();
     foreach ($params as $value) {
