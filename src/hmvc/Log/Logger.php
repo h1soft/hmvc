@@ -37,5 +37,41 @@ namespace hmvc\Log;
  * @author Administrator
  */
 class Logger {
-    
+
+    const ERROR = 'ERROR';  // 一般错误: 一般性错误
+    const WARNING = 'WARNING';  // 警告性错误: 需要发出警告的错误
+    const NOTICE = 'NOTICE';  // 通知: 程序可以运行但是还不够完美的错误
+    const INFO = 'INFO';  // 信息: 程序输出信息
+    const DEBUG = 'DEBUG';  // 调试: 调试信息
+    const SQL = 'SQL';
+
+    private $driver = 'file';
+    private static $logInstance;
+    private static $logCache = array();
+
+    /**
+     * 直接写入
+     * @param type $message
+     * @param type $type
+     */
+    public static function write($message, $type = self::ERROR) {
+        $log = self::getLog();
+        $log->write($message, $type);
+    }
+
+    public static function getLog() {
+        $model = self::model();
+        switch ($model->driver) {
+            case 'file':
+                if (!isset(self::$logInstance)) {
+                    self::$logInstance = new Driver\File();
+                }
+                break;
+
+            default:
+                throw new \Exception("Log驱动不存在");
+        }
+        return self::$logInstance;
+    }
+
 }
