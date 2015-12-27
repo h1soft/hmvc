@@ -58,7 +58,6 @@ class Config {
                 static::$data[$name] = include $configFileName;
             }
         }
-        return $this;
     }
 
     /**
@@ -91,7 +90,6 @@ class Config {
      */
     public static function set($name, $value = array()) {
         Arr::set(static::$data, $name, $value);
-        return $this;
     }
 
     /**
@@ -110,7 +108,6 @@ class Config {
      */
     public static function remove($name) {
         Arr::set(static::$data, $name, array());
-        return $this;
     }
 
 }
