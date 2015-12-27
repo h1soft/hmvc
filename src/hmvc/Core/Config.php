@@ -36,44 +36,53 @@ use hmvc\Helpers\Arr;
 /**
  * Description of Config
  *
- * @author Administrator
+ * @author allen <allen@w4u.cn>
  */
 class Config {
 
-    private static $_data = array();
+    /**
+     *
+     * @var array Config Item
+     */
+    private static $data = array();
 
+    /**
+     * 
+     * @param type $name
+     * @return array
+     */
     public static function load($name) {
-        if (!array_key_exists($name, static::$_data)) {
+        if (!array_key_exists($name, static::$data)) {
             $configFileName = config_path() . '/' . $name . '.php';
             if (is_file($configFileName)) {
-                static::$_data[$name] = include $configFileName;
+                static::$data[$name] = include $configFileName;
             }
         }
-        return static::$_data[$name];
+        return static::$data[$name];
     }
 
     public static function all() {
-        return static::$_data;
+        return static::$data;
     }
 
     public static function get($name, $default = NULL) {
         $names = explode('.', $name);
-        if (isset($names[0]) && !Arr::has(static::$_data, $names[0])) {
+        if (isset($names[0]) && !Arr::has(static::$data, $names[0])) {
             static::load($names[0]);
         }
-        return Arr::get(static::$_data, $name, $default);
+        return Arr::get(static::$data, $name, $default);
     }
 
     public static function set($name, $value = array()) {
-        Arr::set(static::$_data, $name, $value);
+        Arr::set(static::$data, $name, $value);
     }
 
     public static function has($name) {
-        return Arr::has(static::$_data, $name);
+        return Arr::has(static::$data, $name);
     }
 
     public static function remove($name) {
-        Arr::set(static::$_data, $name, array());
+        Arr::set(static::$data, $name, array());
     }
 
 }
