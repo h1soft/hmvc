@@ -157,7 +157,7 @@ function hmvcError($code, $message, $file, $line) {
         return;
     }
     if ($code) {
-        hmvc\Core\StackTrace::systemError($message, true, false);
+        hmvc\Core\StackTrace::systemError($code, $message, $file, $line);
     }
 }
 

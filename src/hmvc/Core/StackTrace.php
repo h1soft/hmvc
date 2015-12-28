@@ -40,20 +40,9 @@ use hmvc\Http\Response;
  */
 class StackTrace {
 
-    public static function systemError($message, $show = true, $halt = true) {
-
+    public static function systemError($code, $message, $file, $line) {
         $showTrace = self::debugBacktrace();
-
-
-        if ($show) {
-            self::showError('system', $message, $showTrace, 0);
-        }
-
-        if ($halt) {
-            exit();
-        } else {
-            return $message;
-        }
+        self::showError('system', $message, $showTrace);
     }
 
     /**
@@ -67,28 +56,38 @@ class StackTrace {
         $show = array();
         $debugBacktrace = debug_backtrace();
         ksort($debugBacktrace);
-        foreach ($debugBacktrace as $k => $error) {
-            if (!isset($error['file'])) {
+        array_shift($debugBacktrace);
+        array_shift($debugBacktrace);
+        foreach ($debugBacktrace as $k => $entry) {
+            if (!isset($entry['file'])) {
                 try {
-                    if (isset($error['class'])) {
-                        $reflection = new \ReflectionMethod($error['class'], $error['function']);
+                    if (isset($entry['class'])) {
+                        $reflection = new \ReflectionMethod($entry['class'], $entry['function']);
                     } else {
-                        $reflection = new \ReflectionFunction($error['function']);
+                        $reflection = new \ReflectionFunction($entry['function']);
                     }
-                    $error['file'] = $reflection->getFileName();
-                    $error['line'] = $reflection->getStartLine();
+                    $entry['file'] = $reflection->getFileName();
+                    $entry['line'] = $reflection->getStartLine();
                 } catch (Exception $e) {
                     continue;
                 }
             }
 
-            $error['file'] = str_replace(base_path(), '', $error['file']);
-            $func = isset($error['class']) ? $error['class'] : '';
-            $func .= isset($error['type']) ? $error['type'] : '';
-            $func .= isset($error['function']) ? $error['function'] : '';
-            $error['function'] = $func;
-            $error['line'] = sprintf('%05d', $error['line']);
-            $show[] = $error;
+            $entry['file'] = str_replace(base_path(), '', $entry['file']);
+            $func = isset($entry['class']) ? $entry['class'] : '';
+            $func .= isset($entry['type']) ? $entry['type'] : '';
+
+            if (isset($entry['function']) && $entry['function'] == 'hmvcError') {
+                $func .= 'break  <a href="#" style="color:red;" onclick="showCode();">@Source Code</a><script>function showCode(){document.getElementById("sourceCode").style.display = document.getElementById("sourceCode").style.display=="none" ? "" : "none";}</script><div id="sourceCode" style="display:none">'
+                        . self::_showSource($entry['file'], $entry['line'], 2) . '</div>';
+            } else {
+                $func .= $entry['function'];
+            }
+
+
+            $entry['function'] = $func;
+            $entry['line'] = sprintf('%05d', $entry['line']);
+            $show[] = $entry;
         }
         return $show;
     }
@@ -101,7 +100,7 @@ class StackTrace {
      * @param mixed $exception
      */
     public static function exceptionError($exception) {
-        if ($exception instanceof Db) {
+        if ($exception instanceof DatabaseException) {
             $type = 'db';
         } else {
             $type = 'system';
@@ -118,8 +117,9 @@ class StackTrace {
             $errorMsg = $exception->getMessage();
         }
         $trace = $exception->getTrace();
-        krsort($trace);
-        $trace[] = array('file' => $exception->getFile(), 'line' => $exception->getLine(), 'function' => 'break');
+        $showcode = '<a href="#" style="color:red;" onclick="showCode();">@Source Code</a><script>function showCode(){document.getElementById("sourceCode").style.display = document.getElementById("sourceCode").style.display=="none" ? "" : "none";}'
+                . '</script><div id="sourceCode" style="display:none">' . self::_showSource($exception->getFile(), $exception->getLine(), 2) . '</div>';
+        array_unshift($trace, array('file' => $exception->getFile(), 'line' => $exception->getLine(), 'function' => 'break ' . $showcode));
         $phpMsg = array();
         foreach ($trace as $error) {
             if (!empty($error['function'])) {
@@ -127,26 +127,7 @@ class StackTrace {
                 if (!empty($error['class'])) {
                     $fun .= $error['class'] . $error['type'];
                 }
-                $fun .= $error['function'] . '(';
-                if (!empty($error['args'])) {
-                    $mark = '';
-                    foreach ($error['args'] as $arg) {
-                        $fun .= $mark;
-                        if (is_array($arg)) {
-                            $fun .= 'Array';
-                        } elseif (is_bool($arg)) {
-                            $fun .= $arg ? 'true' : 'false';
-                        } elseif (is_int($arg)) {
-                            $fun .= defined('DEBUG') ? $arg : '%d';
-                        } elseif (is_float($arg)) {
-                            $fun .= defined('DEBUG') ? $arg : '%f';
-                        } else {
-                            $fun .= defined('DEBUG') ? '\'' . htmlspecialchars(substr(self::clear($arg), 0, 10)) . (strlen($arg) > 10 ? ' ...' : '') . '\'' : '%s';
-                        }
-                        $mark = ', ';
-                    }
-                }
-                $fun .= ')';
+                $fun .= $error['function'];
                 $error['function'] = $fun;
             }
             if (!isset($error['line'])) {
@@ -158,54 +139,53 @@ class StackTrace {
         exit();
     }
 
-    /**
-     * 记录错误日志
-     *
-     * @static
-     * @access public
-     * @param string $message
-     */
-    public static function writeErrorLog($message) {
+    private static function _showSource($file, $lineNumber, $padding = 7) {
+        if (!$file OR ! is_readable($file)) {
+            return false;
+        }
 
-        return false; // 暂时不写入
+        $file = fopen($file, 'r');
+        $line = 0;
 
-        $message = self::clear($message);
-        $time = time();
-        $file = LOG_PATH . '/' . date('Y.m.d') . '_errorlog.php';
-        $hash = md5($message);
+        # Set the reading range
+        $range = array(
+            'start' => $lineNumber - $padding,
+            'end' => $lineNumber + $padding
+        );
 
-        $userId = 0;
-        $ip = get_client_ip();
+        # set the zero-padding amount for line numbers
+        $format = '% ' . strlen($range['end']) . 'd';
 
-        $user = '<b>User:</b> userId=' . intval($userId) . '; IP=' . $ip . '; RIP:' . $_SERVER['REMOTE_ADDR'];
-        $uri = 'Request: ' . htmlspecialchars(self::clear($_SERVER['REQUEST_URI']));
-        $message = "<?php exit;?>t{$time}t$messaget$hasht$user $urin";
-
-// 判断该$message是否在时间间隔$maxtime内已记录过，有，则不用再记录了
-        if (is_file($file)) {
-            $fp = @fopen($file, 'rb');
-            $lastlen = 50000;  // 读取最后的 $lastlen 长度字节内容
-            $maxtime = 60 * 10;  // 时间间隔：10分钟
-            $offset = filesize($file) - $lastlen;
-            if ($offset > 0) {
-                fseek($fp, $offset);
+        $source = '';
+        while (( $row = fgets($file) ) !== false) {
+            # increment the line number
+            if (++$line > $range['end']) {
+                break;
             }
-            if ($data = fread($fp, $lastlen)) {
-                $array = explode("n", $data);
-                if (is_array($array))
-                    foreach ($array as $key => $val) {
-                        $row = explode("t", $val);
-                        if ($row[0] != '<?php exit;?>') {
-                            continue;
-                        }
-                        if ($row[3] == $hash && ($row[1] > $time - $maxtime)) {
-                            return;
-                        }
-                    }
+
+            if ($line >= $range['start']) {
+                # make the row safe for output
+                $row = htmlspecialchars($row, ENT_NOQUOTES, 'UTF-8');
+
+                # trim whitespace and sanitize the row
+                $row = '<span>' . sprintf($format, $line) . '</span> ' . $row;
+
+                if ($line === $lineNumber) {
+                    # apply highlighting to this row
+                    $row = '<div class="highlight">' . $row . '</div>';
+                } else {
+                    $row = '<div>' . $row . '</div>';
+                }
+
+                # add to the captured source
+                $source .= $row;
             }
         }
 
-        error_log($message, 3, $file);
+        # close the file
+        fclose($file);
+
+        return $source;
     }
 
     /**
@@ -259,7 +239,6 @@ class StackTrace {
  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
  <meta name="ROBOTS" content="NOINDEX,NOFOLLOW,NOARCHIVE" />
  <style type="text/css">
-
  body { background-color: white; color: black; font: 9pt/11pt verdana, arial, sans-serif;}
  #container {margin: 10px;}
  #message {width: 1024px; color: black;}
@@ -280,7 +259,6 @@ class StackTrace {
   margin-bottom: 1em;
   padding: 1em;
  }
- 
  .help {
   background: #F3F3F3;
   border-radius: 10px 10px 10px 10px;
@@ -289,7 +267,6 @@ class StackTrace {
   line-height: 160%;
   padding: 1em;
  }
- 
  .sql {
   background: none repeat scroll 0 0 #FFFFCC;
   border: 1px solid #aaaaaa;
@@ -300,7 +277,9 @@ class StackTrace {
   margin-top: 1em;
   padding: 4px;
  }
-
+.highlight{
+background   : rgb(226, 135, 135);
+}
  </style>
 </head>
 <body>
