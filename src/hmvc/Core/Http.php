@@ -35,6 +35,7 @@ use Exception;
 use hmvc\Http\Request;
 use hmvc\Routing\Router;
 use hmvc\Events\Event;
+use hmvc\Constraints\KernelInterface;
 
 /**
  * Description of Http

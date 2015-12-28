@@ -29,15 +29,13 @@
 
  */
 
-namespace hmvc\Core;
+namespace hmvc\Constraints;
 
 /**
+ * Description of ServiceInterface
  *
  * @author Administrator
  */
-interface KernelInterface {
-    
-    public function getName();
-
-    public function dispatch();
+class ServiceInterface {
+    //put your code here
 }
