@@ -150,4 +150,8 @@ class Request extends SymfonyRequest {
         return $this->getContentType() == 'xml';
     }
 
+    public function getFlash($type, $default = array()) {
+        return $this->session()->flash()->get($type, $default);
+    }
+
 }

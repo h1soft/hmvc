@@ -58,5 +58,15 @@ class RedirectResponse extends SymfonyRedirectResponse {
         }
         return $this;
     }
+    
+    /**
+     * 
+     * @param string $key
+     * @param array|string $values
+     * @param boolean $replace
+     */
+    public function header($key, $values, $replace = true) {
+        $this->headers->set($key, $values, $replace);
+    }
 
 }

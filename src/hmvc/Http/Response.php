@@ -62,4 +62,29 @@ class Response extends SymfonyResponse {
         return JsonResponse::make($content, $status, $headers);
     }
 
+    /**
+     * add Flash messages
+     * @param string $type
+     * @param string $message
+     * @return \hmvc\Http\RedirectResponse
+     */
+    public function with($type, $message) {
+        $session = app()->get('session');
+        $type = is_array($type) ? $type : array($type => $message);
+        foreach ($type as $key => $value) {
+            $session->addFlash($key, $value);
+        }
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @param array|string $values
+     * @param boolean $replace
+     */
+    public function header($key, $values, $replace = true) {
+        $this->headers->set($key, $values, $replace);
+    }
+
 }
