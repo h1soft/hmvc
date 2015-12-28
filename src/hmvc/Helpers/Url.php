@@ -34,8 +34,12 @@ namespace hmvc\Helpers;
 /**
  * Description of Url
  *
- * @author Administrator
+ * @author allen <allen@w4u.cn>
  */
 class Url {
-    //put your code here
+
+    public static function toQuery($data) {
+        return http_build_query($data);
+    }
+
 }
