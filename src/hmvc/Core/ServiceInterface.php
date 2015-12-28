@@ -29,13 +29,13 @@
 
  */
 
-namespace hmvc\Constraints;
+namespace hmvc\Core;
 
 /**
+ * Description of ServiceInterface
  *
- * @author allen <allen@w4u.cn>
+ * @author Administrator
  */
-interface EventInterface {
-
-    public function event($eventName);
+class ServiceInterface {
+    //put your code here
 }

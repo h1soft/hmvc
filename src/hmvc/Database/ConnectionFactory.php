@@ -31,7 +31,7 @@
 
 namespace hmvc\Database;
 
-use hmvc\Constraints\DefinitionInterface;
+use hmvc\Core\DefinitionInterface;
 use hmvc\Core\Config;
 
 /**

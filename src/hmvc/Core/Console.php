@@ -31,28 +31,11 @@
 
 namespace hmvc\Core;
 
-use hmvc\Constraints\KernelInterface;
-
 /**
  * Description of Console
  *
  * @author Administrator
  */
-class Console implements KernelInterface {
-
-    protected $app;
-
-    public function __construct(Application $app) {
-        $this->app = $app;
-        Event::send('system.init');
-    }
-
-    public function dispatch() {
-        
-    }
-
-    public function getName() {
-        return 'hmvc\Core\Console';
-    }
-
+class Console {
+    //put your code here
 }
