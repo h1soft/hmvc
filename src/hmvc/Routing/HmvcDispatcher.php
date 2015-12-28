@@ -234,4 +234,20 @@ class HmvcDispatcher {
         }
     }
 
+    public function getPathController() {
+        return $this->prefix . '/' . $this->moduleName . '/' . $this->controllerName;
+    }
+
+    public function getPathAction() {
+        return $this->prefix . '/' . $this->moduleName . '/' . $this->controllerName . '/' . $this->actionName;
+    }
+
+    public function getPathModule() {
+        return $this->prefix . '/' . $this->moduleName;
+    }
+
+    public function getPathPrefix() {
+        return $this->prefix;
+    }
+
 }
