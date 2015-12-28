@@ -29,13 +29,15 @@
 
  */
 
-namespace hmvc\Core;
+namespace hmvc\Constraints;
 
 /**
  *
- * @author Administrator
+ * @author allen <allen@w4u.cn>
  */
-interface EventInterface {
+interface KernelInterface {
 
-    public function event($eventName);
+    public function getName();
+
+    public function dispatch();
 }

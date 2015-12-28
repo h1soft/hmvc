@@ -29,11 +29,11 @@
 
  */
 
-namespace hmvc\Core;
+namespace hmvc\Constraints;
 
 /**
  *
- * @author Administrator
+ * @author allen <allen@w4u.cn>
  */
 interface DefinitionInterface {
 

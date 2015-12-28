@@ -34,7 +34,7 @@ namespace hmvc\Mail\Mailer;
 /**
  * Description of Mailer
  *
- * @author Administrator
+ * @author allen <allen@w4u.cn>
  */
 class Mailer {
     
