@@ -40,6 +40,18 @@ function app() {
 }
 
 /**
+ * 
+ * @param string $path
+ * @return baseurl
+ */
+function baseUrl($path = NULL) {
+    if ($path) {
+        return app()->get('request')->baseUrl() . $path;
+    }
+    return app()->get('request')->baseUrl();
+}
+
+/**
  * BasePath
  * @param type $path
  * @return string basePath
