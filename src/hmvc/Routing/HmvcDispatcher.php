@@ -146,7 +146,7 @@ class HmvcDispatcher {
         if ($controllerMethod->getNumberOfParameters() > 0) {
             $parameters = array();
             foreach ($controllerMethod->getParameters() as $param) {
-                $parameters[$param->getName()] = array_get($this->params, $param->getName(), $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null );
+                $parameters[$param->getName()] = array_get($this->params, $param->getName(), $param->isDefaultValueAvailable() ? $param->getDefaultValue() : $this->app->get($param->getName()) );
             }
             $response = $controllerMethod->invokeArgs($controller, $parameters);
         } else {
