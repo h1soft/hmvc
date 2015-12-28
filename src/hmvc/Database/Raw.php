@@ -40,8 +40,12 @@ class Raw {
 
     public $raw;
 
-    public function __construct($rawString) {
-        $this->raw = $rawString;
+    public function __construct($value) {
+        $this->raw = $value;
+    }
+
+    public static function make($value) {
+        return new Raw($value);
     }
 
     public function __toString() {

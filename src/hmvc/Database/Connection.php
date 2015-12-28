@@ -36,9 +36,11 @@ use hmvc\Core\Config;
 use hmvc\Helpers\Arr;
 
 /**
- * Description of Connection
+ * Database Connection
+ * 
+ * Support (MySQL \ PGSQL \ SQLite)
  *
- * @author Administrator
+ * @author <allen@w4u.cn>
  */
 class Connection {
 
@@ -386,6 +388,35 @@ class Connection {
         return $this->driver->errorInfo();
     }
 
+    /**
+     * params
+     * @param array $params
+     * @return \hmvc\Database\Connection
+     */
+    public function bindParams($params) {
+        if (empty($params)) {
+            return;
+        }
+        if (!is_array($params)) {
+            $params = array($params);
+        }
+
+        $isassoc = Arr::isAssoc($params);
+        foreach ($params as $name => $val) {
+            if ($isassoc) {
+                $this->bind($name, $val);
+            } else {
+                $this->bind($name + 1, $val);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * values
+     * @param type $params
+     * @return \hmvc\Database\Connection
+     */
     public function bindValues($params) {
         if (empty($params)) {
             return;
@@ -402,6 +433,7 @@ class Connection {
                 $this->bind($name + 1, $val);
             }
         }
+        return $this;
     }
 
     public function bind($param, $value, $type = null) {
@@ -421,7 +453,7 @@ class Connection {
                     $type = PDO::PARAM_STR;
             }
         }
-        $this->statement->bindValue($param, $value, $type);
+        $this->statement->bindValue(':' . $param, $value, $type);
         return $this;
     }
 
@@ -504,7 +536,7 @@ class Connection {
                 $placeholders[] = $value->raw;
             } else {
                 $placeholders[] = ':' . $name;
-                $params[':' . $name] = $value;
+                $params[$name] = $value;
             }
         }
         $sql = 'INSERT INTO ' . $this->driver->quoteTableName($this->tableName($tableName))
@@ -521,11 +553,11 @@ class Connection {
             if ($value instanceof Raw) {
                 $placeholders[] = $this->driver->quoteColumnName($name) . '=' . $value->raw;
                 foreach ($value->params as $key => $val) {
-                    $params[':' . $key] = $val;
+                    $params[$key] = $val;
                 }
             } else {
                 $placeholders[] = $this->driver->quoteColumnName($name) . '=:' . $name;
-                $params[':' . $name] = $value;
+                $params[$name] = $value;
             }
         }
 
@@ -570,7 +602,7 @@ class Connection {
                     $lines[] = $this->driver->quoteColumnName($name) . '=' . $value->raw;
                 } else {
                     $lines[] = $this->driver->quoteColumnName($name) . '=:' . $name;
-                    $this->queryParams[':' . $name] = $value;
+                    $this->queryParams[$name] = $value;
                 }
             }
             return implode(' , ', $lines);
@@ -581,7 +613,7 @@ class Connection {
                     $lines[] = $this->driver->quoteColumnName($name) . '=' . $value->raw;
                 } else {
                     $lines[] = $this->driver->quoteColumnName($name) . '=:' . $name;
-                    $this->queryParams[':' . $name] = $value;
+                    $this->queryParams[$name] = $value;
                 }
             }
             return implode(' , ', $lines);

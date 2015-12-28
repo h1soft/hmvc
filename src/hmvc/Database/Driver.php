@@ -34,7 +34,7 @@ namespace hmvc\Database;
 /**
  * Description of Driver
  *
- * @author Administrator
+ * @author <allen@w4u.cn>
  */
 interface Driver {
 

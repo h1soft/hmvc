@@ -36,7 +36,7 @@ use hmvc\Core\Application;
 /**
  * Description of DB
  *
- * @author Administrator
+ * @author <allen@w4u.cn>
  */
 class DB {
 

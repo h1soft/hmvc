@@ -37,7 +37,7 @@ use hmvc\Core\Config;
 /**
  * Description of ConnectionFactory
  *
- * @author Administrator
+ * @author <allen@w4u.cn>
  */
 class ConnectionFactory implements DefinitionInterface {
 

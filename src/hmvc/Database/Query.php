@@ -32,6 +32,17 @@
 namespace hmvc\Database;
 
 use hmvc\Database\Connection;
+use hmvc\Helpers\Str;
+
+/**
+ * ##demo
+ * 
+ * $rs = DB::table('user')->where('name', 'like', '%b')->where(function($query) {
+ * $query->orWhere('Id', 29);
+ * $query->orWhere('Id', 31);
+ * $query->orWhere('Id', 33);
+ * })->getSQL();
+ */
 
 /**
  * Description of Query
@@ -39,6 +50,7 @@ use hmvc\Database\Connection;
  * @author allen <allen@w4u.cn>
  */
 class Query {
+
     /**
      *
      * @var string (SELECT|DELETE|UPDATE)
@@ -47,21 +59,25 @@ class Query {
     protected $query = array();
     protected $select = array();
     protected $fields = array();
+
     /**
      *
      * @var array tables
      */
     protected $from = array();
+
     /**
      *
      * @var array wheres
      */
     protected $where = array();
+
     /**
      *
      * @var array  havings
      */
     protected $having = array();
+
     /**
      *
      * @var array joins
@@ -72,16 +88,20 @@ class Query {
     protected $groupBy = array();
     protected $limit = 0;
     protected $offset = 0;
+    protected $distinct = false;
+
     /**
      *
-     * @var \PDO
+     * @var \hmvc\Database\Driver
      */
     private $driver;
+
     /**
      *
      * @var string SQL OPTION (EXPLAIN)
      */
     protected $preoption = '';
+    protected $isclosureWhere = false;
 
     /**
      *
@@ -143,17 +163,144 @@ class Query {
     }
 
     /**
-     * Add statement for where - ... WHERE [?] ...
-     *
-     * Examples:
-     * $sql->where("user_id = ?", $user_id);
-     * $sql->where("u.registered > ? AND (u.is_active = ? OR u.column IS NOT NULL)", array($registered, 1));
-     *
-     * @param string $conditions
-     * @param mixed $params
-     * @return Query
+     * add where to statement
+     * @param string $name
+     * @param string $operator (in|not in|<>|=|!=|....)
+     * @param string|array $value
+     * @return \hmvc\Database\Query
      */
-    function where($conditions, $params = array()) {
+    function where($name, $operator = '=', $value = null) {
+        if (is_callable($name)) {
+            $this->isclosureWhere = true;
+            $this->_addWhere('(', 'AND');
+            call_user_func($name, $this);
+            $this->where[] = ')';
+            $this->isclosureWhere = false;
+            return $this;
+        }
+        $where = $this->driver->quoteColumnName($name);
+        $paramName = Str::random(Str::ALPHA);
+        $colName = ':' . $paramName;
+
+        switch (strtoupper($operator)) {
+            case 'IN':
+            case 'NOT IN':
+                if (is_array($value)) {
+                    $value = implode(',', $value);
+                    $where .= ' ' . $operator . ' (' . $value . ')';
+                } elseif ($value instanceof Raw) {
+                    $where .= ' ' . $operator . ' (' . $value->raw . ')';
+                } else {
+                    $where .= ' ' . $operator . ' (' . $colName . ')';
+                }
+
+                break;
+            case 'NOT LIKE':
+            case 'LIKE':
+                $where .= ' ' . $operator . ' ' . $colName . ' ';
+                break;
+            case '=':
+            case '!=':
+            case '<>':
+            case '<=>':
+            case '>':
+            case '<':
+            case '<=':
+            case '>=':
+                if ($value instanceof Raw) {
+                    $where .= ' ' . $operator . $value->raw;
+                } else {
+                    $where .= $operator . $colName;
+                }
+
+                break;
+            case 'IS NULL':
+            case 'IS NOT NULL':
+                $value = NULL;
+                $where .= ' ' . $operator;
+                break;
+            default:
+                $value = $operator;
+                $where .= '=' . $colName;
+                break;
+        }
+        $this->_addWhere($where, 'AND');
+        if (!is_null($value) || !$value instanceof Raw) {
+            $this->params[$paramName] = $value;
+        }
+        return $this;
+    }
+
+    function orWhere($name, $operator = '=', $value = null) {
+        if (is_callable($name)) {
+            $this->isclosureWhere = true;
+            $this->_addWhere('(', 'OR');
+            call_user_func($name, $this);
+            $this->where[] = ')';
+            $this->isclosureWhere = false;
+            return $this;
+        }
+        $where = $this->driver->quoteColumnName($name);
+        $paramName = Str::random(Str::ALPHA);
+        $colName = ':' . $paramName;
+
+        switch (strtoupper($operator)) {
+            case 'IN':
+            case 'NOT IN':
+                if (is_array($value)) {
+                    $value = implode(',', $value);
+                    $where .= ' ' . $operator . ' (' . $value . ')';
+                } elseif ($value instanceof Raw) {
+                    $where .= ' ' . $operator . ' (' . $value->raw . ')';
+                } else {
+                    $where .= ' ' . $operator . ' (' . $colName . ')';
+                }
+
+                break;
+            case 'NOT LIKE':
+            case 'LIKE':
+                $where .= ' ' . $operator . ' ' . $colName . ' ';
+                break;
+            case '=':
+            case '!=':
+            case '<>':
+            case '<=>':
+            case '>':
+            case '<':
+            case '<=':
+            case '>=':
+                if ($value instanceof Raw) {
+                    $where .= ' ' . $operator . $value->raw;
+                } else {
+                    $where .= $operator . $colName;
+                }
+
+                break;
+            case 'IS NULL':
+            case 'IS NOT NULL':
+                $value = NULL;
+                $where .= ' ' . $operator;
+                break;
+            default:
+                $value = $operator;
+                $where .= '=' . $colName;
+                break;
+        }
+        $this->_addWhere($where, 'OR');
+        if (!is_null($value) || !$value instanceof Raw) {
+            $this->params[$paramName] = $value;
+        }
+
+        return $this;
+    }
+
+    /**
+     * 
+     * @param type $conditions
+     * @param type $params
+     * @return \hmvc\Database\Query
+     */
+    function rawWhere($conditions, $params = array()) {
         $this->where[] = $conditions;
         $this->addParams($params);
         return $this;
@@ -184,11 +331,20 @@ class Query {
         return $this;
     }
 
+    private function _addWhere($where, $type = 'AND') {
+        if (empty($this->where) || end($this->where) == '(') {
+            $this->where[] = $where;
+        } else {
+            $this->where[] = $type . ' ';
+            $this->where[] = $where;
+        }
+    }
+
     /**
-     * Add statement for HAVING ...
-     * @param string $statement
-     * @param mixed $params
-     * @return Query
+     * 
+     * @param type $statement
+     * @param type $params
+     * @return \hmvc\Database\Query
      */
     public function having($statement, $params = null) {
         $this->having[] = $statement;
@@ -196,15 +352,6 @@ class Query {
         return $this;
     }
 
-    /**
-     * Add statement for join
-     *
-     * Examples:
-     * $sql->join("INNER JOIN posts p ON p.user_id = u.user_id")
-     *
-     * @param string $statement
-     * @return Query
-     */
     public function join($type, $table, $on, $params = array()) {
         $table = $this->db->tableName($table);
         $type = strtoupper($type);
@@ -228,31 +375,11 @@ class Query {
         return $this;
     }
 
-    /**
-     * Add statement for group - GROUP BY [...]
-     *
-     * Examples:
-     * $sql->groupBy("user_id");
-     * $sql->groupBy("u.is_active, p.post_id");
-     *
-     * @param string $statement
-     * @return Query
-     */
     public function groupBy($statement) {
         $this->groupBy[] = $statement;
         return $this;
     }
 
-    /**
-     * Add statement for order - ORDER BY [...]
-     *
-     * Examples:
-     * $sql->orderBy("registered");
-     * $sql->orderBy("is_active, registered DESC");
-     *
-     * @param string $statement
-     * @return Query
-     */
     public function orderBy($statement) {
         $this->orderBy[] = $statement;
         return $this;
@@ -303,14 +430,18 @@ class Query {
         return $this->db->results($fetch_style);
     }
 
-    public function one() {
+    public function first() {
         $this->db->prepare($this->getSQL(), $this->params);
         $this->db->execute();
-        return $this->db->row();
+        return $this->db->first();
     }
 
     public function count() {
         return $this->db->rowCount();
+    }
+
+    public function setDistinct($distinct) {
+        $this->distinct = $distinct;
     }
 
     /**
@@ -341,11 +472,11 @@ class Query {
         if (is_array($name)) {
             foreach ($name as $key => $val) {
                 $this->fields[] = "$key=:$key";
-                $this->params[':' . $key] = $val;
+                $this->params[$key] = $val;
             }
         } else {
             $this->fields[] = "$name=:$name";
-            $this->params[':' . $name] = $value;
+            $this->params[$name] = $value;
         }
         return $this;
     }
@@ -376,7 +507,7 @@ class Query {
         if (empty($this->select)) {
             $this->select("*");
         }
-        return implode(", ", $this->select) . " FROM ";
+        return $this->distinct ? 'distinct ' . implode(", ", $this->select) . ' FROM ' : implode(", ", $this->select) . ' FROM ';
     }
 
     private function prepareFrom() {
@@ -398,6 +529,9 @@ class Query {
      */
     private function prepareWhereInStatement($column, $params, $not_in = false) {
         $in = ($not_in) ? "NOT IN" : "IN";
+        if (!is_array($params)) {
+            $params = array($params);
+        }
         $this->where[] = $this->driver->quoteColumnName($column) . " " . $in . ' (' . implode(',', $params) . ')';
     }
 
@@ -419,10 +553,11 @@ class Query {
      * @return string
      */
     private function prepareWhereString() {
+        $where = '';
         if (!empty($this->where)) {
-            return " WHERE " . implode(" AND ", $this->where) . " ";
+            $where = ' WHERE ' . implode(' ', $this->where);
         }
-        return '';
+        return $where;
     }
 
     /**

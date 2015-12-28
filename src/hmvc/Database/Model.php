@@ -36,7 +36,7 @@ use ArrayAccess;
 /**
  * Description of Model
  *
- * @author Administrator
+ * @author <allen@w4u.cn>
  */
 abstract class Model implements ArrayAccess {
 
