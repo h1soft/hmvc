@@ -88,16 +88,15 @@ class HmvcDispatcher {
 
     public function dispatch() {
         $this->parseRequest();
-        ob_start();
         $response = $this->callAction();
-        $content = ob_get_clean();
         if ($response instanceof SymfonyResponse) {
             $response->prepare($this->request);
         } else if ($response) {
             $response = Response::create($response, 200)->prepare($this->request);
-        } else {
-            $response = Response::create($content, 200)->prepare($this->request);
         }
+//        else {
+//            $response = Response::create($content, 200)->prepare($this->request);
+//        }
         return $response;
     }
 
