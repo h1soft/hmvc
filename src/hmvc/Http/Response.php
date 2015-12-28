@@ -32,13 +32,25 @@
 namespace hmvc\Http;
 
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use hmvc\Constraints\Jsonable;
+use hmvc\Constraints\Renderable;
 
 /**
  * Description of Response
  *
- * @author Administrator
+ * @author allen <allen@w4u.cn>
  */
 class Response extends SymfonyResponse {
+
+    public function setContent($content) {
+        if ($content instanceof Renderable) {
+            $content = $content->render();
+        } elseif ($content instanceof Jsonable) {
+            $this->header('Content-Type', 'application/json');
+            $content = $content->toJson();
+        }
+        return parent::setContent($content);
+    }
 
     /**
      * 
