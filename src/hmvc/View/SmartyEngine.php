@@ -36,6 +36,6 @@ namespace hmvc\View;
  *
  * @author Administrator
  */
-class SmartyEngine {
-    //put your code here
+class SmartyEngine extends Engine {
+    
 }

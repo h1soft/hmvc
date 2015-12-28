@@ -34,7 +34,24 @@ namespace hmvc\View;
 /**
  * Description of PHPEngine
  *
- * @author Administrator
+ * @author allen <allen@w4u.cn>
  */
 class PhpEngine extends Engine {
+
+    public function getRender($path, $data = array()) {
+        ob_start();
+        extract($data);
+        try {
+            @include $path;
+        } catch (Exception $e) {
+            ob_end_clean();
+            throw $e;
+        }
+        return ob_get_clean();
+    }
+
+    public function layout($layout) {
+        return $this->view->layout($layout);
+    }
+
 }

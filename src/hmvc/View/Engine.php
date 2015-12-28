@@ -31,26 +31,36 @@
 
 namespace hmvc\View;
 
+use hmvc\Core\Application;
+
 /**
  *
- * @author Administrator
+ * @author allen <allen@w4u.cn>
  */
 abstract class Engine {
 
-    public function get($path, $data = array()) {
-        return $this->parseTemplate($path, $data);
+    /**
+     *
+     * @var View
+     */
+    protected $view;
+
+    /**
+     *
+     * @var \hmvc\Core\Application
+     */
+    protected $app;
+
+    public function __construct(View $view) {
+        $this->view = $view;
+        $this->app = Application::instance();
     }
 
-    protected function parseTemplate($path, $data) {
-        ob_start();
-        extract($data);
-        try {
-            include $path;
-        } catch (Exception $e) {
-            ob_end_clean();
-            throw $e;
-        }
-        return ltrim(ob_get_clean());
+    public function getRender($path, $data = array()) {
+        
+    }
+    public function __get($name) {
+        echo $name;die;
     }
 
 }
