@@ -62,10 +62,10 @@ class HmvcDispatcher {
      *
      * @var string
      */
-    protected $prefix;
-    protected $moduleName;
-    protected $controllerName;
-    protected $actionName;
+    public $prefix;
+    public $moduleName;
+    public $controllerName;
+    public $actionName;
     protected $originActionName;
     protected $caseSensitive = false;
     protected $hmvcParams;
@@ -93,6 +93,8 @@ class HmvcDispatcher {
         $content = ob_get_clean();
         if ($response instanceof SymfonyResponse) {
             $response->prepare($this->request);
+        } else if ($response) {
+            $response = Response::create($response, 200)->prepare($this->request);
         } else {
             $response = Response::create($content, 200)->prepare($this->request);
         }

@@ -429,10 +429,10 @@ class Route {
         ob_start();
         $response = call_user_func_array($this->getCallable(), array_values($this->getParams()));
         $content = ob_end_clean();
-        if ($response instanceof \hmvc\Http\Response) {
+        if ($response instanceof \Symfony\Component\HttpFoundation\Response) {
             return $response;
         } else {
-            $response = \hmvc\Http\Response::create($content, 200)->prepare($this->request);
+            $response = \hmvc\Http\Response::create('test', 200);
         }
         return $response;
     }

@@ -212,7 +212,7 @@ class Router {
             if (\hmvc\Helpers\Str::startsWith($resourceUri, $prefix, false)) {
                 $handleClass = $params['handle'];
                 $hmvc = new $handleClass($prefix, $params, $this->app);
-                $this->app->set('hmvc', $hmvc);
+                $this->app->set('hmvcDispatch', $hmvc);
                 return $hmvc->dispatch();
             }
         }
