@@ -68,4 +68,20 @@ class Session extends SymfonySession {
         return $this->getFlashBag()->has($type);
     }
 
+    /**
+     * 
+     * @return array
+     */
+    public function allFlash() {
+        return $this->getFlashBag()->all();
+    }
+
+    /**
+     * 
+     * @return \Symfony\Component\HttpFoundation\Session\Flash\FlashBag
+     */
+    public function flash() {
+        return $this->getFlashBag();
+    }
+
 }
