@@ -63,26 +63,26 @@ class Http implements KernelInterface {
      */
     public function dispatch() {
         Event::send('system.router');
-        if ($this->router->isHMVC()) {
-            return $this->router->hmvcDispatch($this->request->getPathInfo());
+        if ($this->router->isHMVC() && ($response = $this->router->hmvcDispatch($this->request->getPathInfo()))) {
+            return $response;
         }
         $matchedRoutes = $this->router->getMatchedRoutes($this->request->getMethod(), $this->request->getPathInfo());
-        $dispatched = null;
+        $response = null;
         foreach ($matchedRoutes as $route) {
             try {
-                $dispatched = $route->dispatch();
-                if ($dispatched) {
+                $response = $route->dispatch();
+                if ($response) {
                     break;
                 }
             } catch (Exception $e) {
                 continue;
             }
         }
-        if (!$dispatched) {
-            trigger_error('not found');
+        if (!$response) {
+            echo 'not found';
         }
         Event::send('system.routed');
-        return $dispatched;
+        return $response;
     }
 
     public function getName() {

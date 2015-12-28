@@ -29,15 +29,16 @@
 
  */
 
-use hmvc\Container\Container;
+use hmvc\Core\Application;
 
 /**
  * 
  * @return \hmvc\Core\Application
  */
 function app() {
-    return Container::getInstance();
+    return Application::getInstance();
 }
+
 /**
  * BasePath
  * @param type $path
