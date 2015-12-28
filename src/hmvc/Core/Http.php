@@ -80,7 +80,7 @@ class Http implements KernelInterface {
             }
         }
         if (!$response) {
-            echo 'not found';
+            $response = \hmvc\Http\Response::make('not found', 404);
         }
         Event::send('system.routed');
         return $response;
