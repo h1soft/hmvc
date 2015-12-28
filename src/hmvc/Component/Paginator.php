@@ -23,10 +23,8 @@ class Paginator {
     protected $page;
     protected $total;
     protected $data;
-    protected $currentPage;
 
     public function __construct($page = 1, $limit = 20, $data = array()) {
-        $this->currentPage = $page;
         $this->page = $page;
         $this->limit = $limit;
         $this->data = $data;
