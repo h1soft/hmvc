@@ -177,6 +177,15 @@ class Validator {
         $this->context['return'] = true;
     }
 
+    public function addError($fieldName, $message) {
+        if (isset($this->errors[$fieldName])) {
+            $this->errors[$fieldName] = $message;
+        } else {
+            $this->errors[$fieldName] = $message;
+        }
+        return $this;
+    }
+
     /**
      * 
      * @return array all errors
@@ -215,6 +224,16 @@ class Validator {
         filter_var($this->fields[$fieldName], FILTER_VALIDATE_BOOLEAN);
         {
             $this->setError($fieldName, $this->getMessage($fieldName, 'bool'));
+        }
+    }
+
+    protected function validateEmail($fieldName) {
+        if ($this->context['required'] == false && strlen($this->fields[$fieldName]) == 0) {
+            return true;
+        }
+        filter_var($this->fields[$fieldName], FILTER_VALIDATE_EMAIL);
+        {
+            $this->setError($fieldName, $this->getMessage($fieldName, 'email'));
         }
     }
 
@@ -286,6 +305,4 @@ class Validator {
         }
     }
 
-//https://github.com/fuelphp/validation
-//https://github.com/vlucas/valitron/blob/master/src/Valitron/Validator.php
 }
