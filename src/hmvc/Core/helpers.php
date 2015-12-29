@@ -44,7 +44,7 @@ function app() {
  * @param string $path
  * @return baseurl
  */
-function baseUrl($path = NULL, $relative = FALSE) {
+function base_url($path = NULL, $relative = FALSE) {
     if ($path) {
         return app()->get('request')->baseUrl($relative) . $path;
     }
@@ -205,9 +205,68 @@ function class_basename($classname) {
 /**
  * dump objects
  */
+function p() {
+    $params = func_get_args();
+    foreach ($params as $value) {
+        print_r($value);
+    }
+}
+
 function pp() {
     $params = func_get_args();
     foreach ($params as $value) {
         print_r($value);
     }
+    die;
+}
+
+function url_for($url, $params = NULL) {
+//    hmvc\Helpers\Str::startsWith($url, '');
+    $mvc = app()->get('hmvcDispatch');
+    $segments = explode('/', $url);
+    $urls = array();
+    if ($mvc) {
+        $namespace = strtolower($mvc->prefix);
+        $module = strtolower($mvc->moduleName);
+        $controller = strtolower($mvc->controllerName);
+        $action = strtolower($mvc->actionName);
+    }
+
+
+    switch (count($segments)) {
+        case 1:
+            $action = $segments[0];
+            break;
+        case 2:
+            $controller = $segments[0];
+            $action = $segments[1];
+            break;
+        case 3:
+            $module = $segments[0];
+            $controller = $segments[1];
+            $action = $segments[2];
+            break;
+        case 4:
+            $namespace = $segments[0];
+            $module = $segments[1];
+            $controller = $segments[2];
+            $action = $segments[3];
+            break;
+        default:
+
+            break;
+    }
+    $urls[] = $namespace;
+    $urls[] = $module;
+    $urls[] = $controller;
+    $urls[] = $action;
+    $url = implode('/', $urls);
+    if (is_array($params)) {
+        $url .= '?' . http_build_query($params);
+    }
+    return $url;
+}
+
+function url_query($data = array(), $prefix = '') {
+    return $prefix . http_build_query($data);
 }

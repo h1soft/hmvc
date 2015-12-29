@@ -38,7 +38,7 @@ namespace hmvc\Helpers;
  */
 class Url {
 
-    public static function toQuery($data) {
+    public static function query($data) {
         return http_build_query($data);
     }
 
