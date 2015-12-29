@@ -59,8 +59,9 @@ abstract class Engine {
     public function getRender($path, $data = array()) {
         
     }
+
     public function __get($name) {
-        echo $name;die;
+        return $this->app->get($name);
     }
 
 }

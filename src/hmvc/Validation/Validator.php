@@ -128,6 +128,7 @@ class Validator {
                 }
             }
         }
+        return empty($this->errors);
     }
 
     public function addRule($name, $rules = '', $labelText = '', $messages = array()) {
@@ -156,12 +157,11 @@ class Validator {
         if (isset(static::$messages[$fieldName][$ruleName])) {
             return static::$messages[$fieldName][$ruleName];
         }
-
         if (!isset(static::$messages[$ruleName])) {
             return '';
         }
         $label = $this->getLabelText($fieldName);
-        return preg_replace('/{label}/', $label, static::$messages[$ruleName]);
+        return preg_replace("/\{label\}/", $label, static::$messages[$ruleName]);
     }
 
     public function getLabelText($name) {
@@ -221,13 +221,13 @@ class Validator {
         if ($this->context['required'] == false && strlen($this->fields[$fieldName]) == 0) {
             return true;
         }
-        if (filter_var($this->fields[$fieldName], FILTER_VALIDATE_BOOLEAN)) {
+        if (filter_var($this->fields[$fieldName], FILTER_VALIDATE_BOOLEAN) === FALSE) {
             $this->setError($fieldName, $this->getMessage($fieldName, 'bool'));
         }
     }
 
     protected function validateEmail($fieldName) {
-        if ($this->context['required'] == false && strlen($this->fields[$fieldName]) == 0) {
+        if ($this->context['required'] == false) {
             return true;
         }
         if (filter_var($this->fields[$fieldName], FILTER_VALIDATE_EMAIL) === FALSE) {
