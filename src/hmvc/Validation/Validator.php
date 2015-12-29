@@ -244,10 +244,8 @@ class Validator {
         $start = \hmvc\Helpers\Arr::get($params, 0, -1);
         $end = \hmvc\Helpers\Arr::get($params, 1, -1);
         $len = \hmvc\Helpers\Str::len($this->fields[$fieldName]);
-        if ($len != $start) {
-            $this->setError($fieldName, $this->getMessage($fieldName, 'len'));
-            return false;
-        } else if ($len < $start) {
+
+        if ($len < $start) {
             $this->setError($fieldName, $this->getMessage($fieldName, 'len'));
             return false;
         } else if ($len > $end) {
