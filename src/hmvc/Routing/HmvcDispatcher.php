@@ -91,7 +91,7 @@ class HmvcDispatcher {
         $response = $this->callAction();
         if ($response instanceof SymfonyResponse) {
             $response->prepare($this->request);
-        } else if ($response) {
+        } else {
             $response = Response::create($response, 200)->prepare($this->request);
         }
 //        else {
