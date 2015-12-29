@@ -199,7 +199,7 @@ abstract class Model implements ArrayAccess {
     public static function find($ids) {
         $ids = is_array($ids) ? $ids : func_get_args();
         $model = new static;
-        $model->setConnection(Connection::getConnection());
+        $model->setConnection(app()->get('db'));
         $model->db->prepare("select * from " . $model->db->tableName($model->getTable()) . " where " . $model->getPrimaryKey() . ' IN (:id)', array(
             ':id' => implode(',', $ids)
         ));
@@ -235,12 +235,20 @@ abstract class Model implements ArrayAccess {
 
     /**
      * 
+     * @return hmvc\Database\Connection
+     */
+    public static function getDb() {
+        return app()->get('db');
+    }
+
+    /**
+     * 
      * @param type $connection
      * @return type
      */
     public static function using($connection = 'default') {
         $model = new static;
-        $model->setConnection(Connection::getConnection($connection));
+        $model->setConnection(app()->get('db')->using($connection));
         return $model;
     }
 
