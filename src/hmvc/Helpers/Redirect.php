@@ -56,40 +56,12 @@ class Redirect {
         $segments = explode('/', $url);
         switch (count($segments)) {
             case 1:
-                $url = base_url(app()->get('hmvcDispatch')->getPathController()) . '/' . $url;
+                $url = base_url(app()->get('hmvcDispatch')->getPathModule()) . '/' . $url;
                 break;
             case 2:
                 $url = base_url(app()->get('hmvcDispatch')->getPathModule()) . '/' . $url;
                 break;
             case 3:
-                $url = base_url(app()->get('hmvcDispatch')->getPathPrefix()) . '/' . $url;
-                break;
-            default:
-                $url = base_url();
-                break;
-        }
-        $query = '';
-        if (!empty($data)) {
-            $query = is_array($data) ? '?' . http_build_query($data) : '/' . $data;
-        }
-        return new RedirectResponse(strtolower($url) . $query, $status, $headers);
-    }
-
-    /**
-     * 
-     * @param string $url
-     * @param array|string $data
-     * @param int $status
-     * @param array $headers
-     * @return RedirectResponse
-     */
-    public static function controller($url, $data = '', $status = 302, $headers = array()) {
-        $segments = explode('/', $url);
-        switch (count($segments)) {
-            case 1:
-                $url = base_url(app()->get('hmvcDispatch')->getPathModule()) . '/' . $url;
-                break;
-            case 2:
                 $url = base_url(app()->get('hmvcDispatch')->getPathPrefix()) . '/' . $url;
                 break;
             default:

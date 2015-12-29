@@ -221,46 +221,26 @@ function pp() {
 }
 
 function url_for($url, $params = NULL) {
-//    hmvc\Helpers\Str::startsWith($url, '');
     $mvc = app()->get('hmvcDispatch');
-    $segments = explode('/', $url);
-    $urls = array();
-    if ($mvc) {
-        $namespace = strtolower($mvc->prefix);
-        $module = strtolower($mvc->moduleName);
-        $controller = strtolower($mvc->controllerName);
-        $action = strtolower($mvc->actionName);
+    if (!$mvc) {
+        return base_url() . $url;
     }
-
-
+    $segments = explode('/', $url);
     switch (count($segments)) {
         case 1:
-            $action = $segments[0];
+            $url = base_url($mvc->getPathModule()) . '/' . $url;
             break;
         case 2:
-            $controller = $segments[0];
-            $action = $segments[1];
+            $url = base_url($mvc->getPathModule()) . '/' . $url;
             break;
         case 3:
-            $module = $segments[0];
-            $controller = $segments[1];
-            $action = $segments[2];
-            break;
-        case 4:
-            $namespace = $segments[0];
-            $module = $segments[1];
-            $controller = $segments[2];
-            $action = $segments[3];
+            $url = base_url($mvc->getPathPrefix()) . '/' . $url;
             break;
         default:
-
+            $url = base_url();
             break;
     }
-    $urls[] = $namespace;
-    $urls[] = $module;
-    $urls[] = $controller;
-    $urls[] = $action;
-    $url = implode('/', $urls);
+
     if (is_array($params)) {
         $url .= '?' . http_build_query($params);
     }
