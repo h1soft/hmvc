@@ -221,8 +221,7 @@ class Validator {
         if ($this->context['required'] == false && strlen($this->fields[$fieldName]) == 0) {
             return true;
         }
-        filter_var($this->fields[$fieldName], FILTER_VALIDATE_BOOLEAN);
-        {
+        if (filter_var($this->fields[$fieldName], FILTER_VALIDATE_BOOLEAN)) {
             $this->setError($fieldName, $this->getMessage($fieldName, 'bool'));
         }
     }
@@ -231,8 +230,7 @@ class Validator {
         if ($this->context['required'] == false && strlen($this->fields[$fieldName]) == 0) {
             return true;
         }
-        filter_var($this->fields[$fieldName], FILTER_VALIDATE_EMAIL);
-        {
+        if (filter_var($this->fields[$fieldName], FILTER_VALIDATE_EMAIL) === FALSE) {
             $this->setError($fieldName, $this->getMessage($fieldName, 'email'));
         }
     }
