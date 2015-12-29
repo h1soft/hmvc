@@ -31,6 +31,8 @@
 
 namespace hmvc\Component\Acl;
 
+use hmvc\Database\Connection;
+
 /**
  * Package hmvc\Component\Acl  Auth
  *
@@ -38,63 +40,56 @@ namespace hmvc\Component\Acl;
  */
 class Auth {
 
-    function check($permission, $userid, $group_id) {
+    protected $userTableName = 'user_permissions';
+    protected $groupTableName = 'group_permissions';
 
-        //we check the user permissions first
-        If (!$this->user_permissions($permission, $userid)) {
+    /**
+     *
+     * @var hmvc\Database\Connection 
+     */
+    protected $db;
+
+    public function __construct(Connection $db) {
+        $this->db = $db;
+    }
+
+    function hasPermission($permission, $userid, $group_id) {
+
+        if (!$this->userPermissions($permission, $userid)) {
             return false;
         }
 
-        if (!$this->group_permissions($permission, $group_id) & $this->IsUserEmpty()) {
+        if (!$this->groupPermissions($permission, $group_id)) {
             return false;
         }
 
         return true;
     }
 
-    function user_permissions($permission, $userid) {
-        $this->db->q("SELECT COUNT(*) AS count FROM user_permissions WHERE permission_name='$permission' AND userid='$userid' ");
-        $result = \hmvc\Database\DB::table('user_permissions')->where('permission_name=:permission_name AND userid=:userid', array(
-            'permission_name' => $permission,
-            'userid' => $userid
-        ))->get();
+    protected function userPermissions($permission, $userid) {
+        $tablename = $this->db->tableName($this->userTableName);
+        $user = $this->db->prepare("SELECT * FROM {$tablename} WHERE permission_name=:permission_name AND userid=:userid", array(
+                    'permission_name' => $permission,
+                    'userid' => $userid
+                ))->first();
 
-       if(empty($result)){
-            $this->db->q("SELECT * FROM user_permissions WHERE permission_name='$permission' AND userid='$userid' ");
-            If ($f['permission_type'] == 0) {
-                return false;
-            }
-            return true;
+        if (isset($user['permission_type']) && $user['permission_type'] == 'no') {
+            return false;
         }
         return true;
     }
 
-    function group_permissions($permission, $group_id) {
-        $this->db->q("SELECT COUNT(*) AS count FROM group_permissions WHERE permission_name='$permission' AND group_id='$group_id' ");
+    protected function groupPermissions($permission, $group_id) {
+        $tablename = $this->db->tableName($this->groupTableName);
+        $group = $this->db->prepare("SELECT * FROM {$tablename} WHERE permission_name=:permission_name AND userid=:userid", array(
+                    'permission_name' => $permission,
+                    'userid' => $group_id
+                ))->first();
 
-        $f = $this->db->f();
-
-        if ($f['count'] > 0) {
-            $this->db->q("SELECT * FROM group_permissions WHERE permission_name='$permission' AND group_id='$group_id' ");
-
-            $f = $this->db->f();
-
-            If ($f['permission_type'] == 0) {
-                return false;
-            }
-
-            return true;
+        if (isset($group['permission_type']) && $group['permission_type'] == 'no') {
+            return false;
         }
-
         return true;
-    }
-
-    function setUserEmpty($val) {
-        $this->userEmpty = $val;
-    }
-
-    function isUserEmpty() {
-        return $this->userEmpty;
     }
 
 }
