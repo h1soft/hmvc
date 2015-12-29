@@ -32,6 +32,7 @@
 namespace hmvc\Component\Acl;
 
 use Exception;
+use hmvc\FileSystem\File;
 
 /**
  * Package hmvc\Component\Acl  
@@ -40,7 +41,7 @@ use Exception;
  *
  * @author allen <allen@w4u.cn>
  */
-abstract class Resource {
+class Resource {
 
     /**
      *
@@ -56,6 +57,12 @@ abstract class Resource {
 
     /**
      *
+     * @var string module title
+     */
+    public $name;
+
+    /**
+     *
      * @var controller and actions
      */
     protected static $resources = array();
@@ -63,6 +70,7 @@ abstract class Resource {
 
     public function __construct($namespace = '') {
         $this->namespace = $namespace;
+        static::$resources['modules'][$this->module] = $this->name;
         $this->initialize();
     }
 
@@ -103,11 +111,32 @@ abstract class Resource {
         return $this;
     }
 
-    public static function resources() {
+    public static function getResources() {
         return static::$resources;
     }
 
-    public static function getResources() {
+    /**
+     * load Resources
+     * @param string $namespace
+     * @param string $path
+     * @return array
+     * @throws Exception
+     */
+    public static function loadResources($namespace, $path = '') {
+        if (!$namespace) {
+            throw new Exception('$namespace is invalid');
+        }
+        $modules = File::listDir(base_path($path) . '/');
+        if (empty($modules)) {
+            return array();
+        }
+        foreach ($modules as $moduleName) {
+            $aclClass = $namespace . '\\' . $moduleName . '\\Acl';
+            if (class_exists($aclClass)) {
+                $module = new $aclClass();
+                unset($module);
+            }
+        }
         return static::$resources;
     }
 
