@@ -44,11 +44,11 @@ function app() {
  * @param string $path
  * @return baseurl
  */
-function baseUrl($path = NULL) {
+function baseUrl($path = NULL, $relative = FALSE) {
     if ($path) {
-        return app()->get('request')->baseUrl() . $path;
+        return app()->get('request')->baseUrl($relative) . $path;
     }
-    return app()->get('request')->baseUrl();
+    return app()->get('request')->baseUrl($relative);
 }
 
 /**

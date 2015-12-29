@@ -99,8 +99,8 @@ class Request extends SymfonyRequest {
         return $this->getClientIps();
     }
 
-    public function baseUrl() {
-        return rtrim($this->getSchemeAndHttpHost() . $this->getBaseUrl(), '/');
+    public function baseUrl($relative = false) {
+        return rtrim(($relative ? $this->getSchemeAndHttpHost() : '') . $this->getBaseUrl(), '/');
     }
 
     public function url() {
