@@ -89,6 +89,10 @@ class Config {
      * @return \hmvc\Core\Config
      */
     public static function set($name, $value = array()) {
+        $names = explode('.', $name);
+        if (isset($names[0]) && !Arr::has(static::$data, $names[0])) {
+            static::load($names[0]);
+        }
         Arr::set(static::$data, $name, $value);
     }
 
