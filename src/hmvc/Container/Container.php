@@ -32,6 +32,7 @@
 namespace hmvc\Container;
 
 use hmvc\Core\Definition;
+use hmvc\Constraints\DefinitionInterface;
 
 /**
  * Description of Singleton
@@ -51,7 +52,7 @@ abstract class Container implements ContainerInterface {
         if (Definition::has($name)) {
             $className = Definition::getClass($name);
             $object = new $className();
-            if ($object instanceof \hmvc\Core\DefinitionInterface) {
+            if ($object instanceof DefinitionInterface) {
                 $object = $object->factory();
             }
             $this->singleton($name, $object);

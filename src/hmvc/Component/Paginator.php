@@ -25,7 +25,7 @@ class Paginator {
     protected $data;
 
     public function __construct($page = 1, $limit = 20, $data = array()) {
-        $this->page = $page;
+        $this->page = $page ? $page : 1;
         $this->limit = $limit;
         $this->data = $data;
     }
@@ -50,14 +50,14 @@ class Paginator {
         }
 
         $last = ceil($this->total / $this->limit);
-
+        $last = $last == 0 ? 1 : $last;
         $start = ( ( $this->page - $linkNum ) > 0 ) ? $this->page - $linkNum : 1;
         $end = ( ( $this->page + $linkNum ) < $last ) ? $this->page + $linkNum : $last;
 
         $html = '<ul class="' . $list_class . '">';
 
         $class = ( $this->page == 1 ) ? "disabled" : "";
-        $html .= '<li class="' . $class . '"><a href="?' . $this->buildQuery(array('limit' => $this->limit, 'page' => ($this->page - 1))) . '">&laquo;</a></li>';
+        $html .= '<li class="' . $class . '"><a href="?' . $this->buildQuery(array('limit' => $this->limit, 'page' => ( $this->page == 1 ) ? $this->page : ($this->page - 1))) . '">&laquo;</a></li>';
 
         if ($start > 1) {
             $html .= '<li><a href="?' . $this->buildQuery(array('limit' => $this->limit, 'page' => 1)) . '">1</a></li>';
@@ -74,10 +74,8 @@ class Paginator {
             $html .= '<li><a href="?' . $this->buildQuery(array('limit' => $this->limit, 'page' => $last)) . '">' . $last . '</a></li>';
         }
 
-        if ($this->page == $last) {
-            $class = ( $this->page == $last ) ? "disabled" : "";
-            $html .= '<li class="' . $class . '"><a href="?' . $this->buildQuery(array('limit' => $this->limit, 'page' => ($this->page + 1))) . '">&raquo;</a></li>';
-        }
+        $class = ( $this->page == $last ) ? "disabled" : "";
+        $html .= '<li class="' . $class . '"><a href="?' . $this->buildQuery(array('limit' => $this->limit, 'page' => ( $this->page == 1 ) ? $this->page : ($this->page - 1))) . '">&raquo;</a></li>';
 
         $html .= '</ul>';
 
