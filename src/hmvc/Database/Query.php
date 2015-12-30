@@ -567,7 +567,7 @@ class Query {
      */
     private function prepareGroupByString() {
         if (!empty($this->groupBy)) {
-            return "GROUP BY " . implode(", ", $this->groupBy) . " ";
+            return " GROUP BY " . implode(", ", $this->groupBy) . " ";
         }
         return '';
     }
@@ -579,7 +579,7 @@ class Query {
      */
     private function prepareHavingString() {
         if (!empty($this->having)) {
-            return "HAVING " . implode(", ", $this->having) . " ";
+            return " HAVING " . implode(", ", $this->having) . " ";
         }
         return '';
     }
@@ -591,7 +591,7 @@ class Query {
      */
     private function prepareOrderByString() {
         if (!empty($this->orderBy)) {
-            return "ORDER BY " . implode(", ", $this->orderBy) . " ";
+            return " ORDER BY " . implode(", ", $this->orderBy) . " ";
         }
         return '';
     }
@@ -603,9 +603,9 @@ class Query {
      */
     private function prepareLimitString() {
         if (!empty($this->limit) && empty($this->offset)) {
-            return "LIMIT {$this->limit}";
+            return " LIMIT {$this->limit}";
         } else if ($this->offset) {
-            return "LIMIT {$this->limit},{$this->offset}";
+            return " LIMIT {$this->limit},{$this->offset}";
         }
         return '';
     }
