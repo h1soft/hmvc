@@ -231,7 +231,7 @@ function url_for($url, $params = NULL) {
             $url = base_url($mvc->getPathModule()) . '/' . $url;
             break;
         case 2:
-            $url = base_url($mvc->getPathModule()) . '/' . $url;
+            $url = base_url($mvc->getPathPrefix()) . '/' . $url;
             break;
         case 3:
             $url = base_url($mvc->getPathPrefix()) . '/' . $url;

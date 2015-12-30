@@ -133,6 +133,8 @@ class HmvcDispatcher {
             $controllerMethod = new ReflectionMethod($controller, $this->actionName);
         } else if (method_exists($controller, $this->actionName)) {
             $controllerMethod = new ReflectionMethod($controller, $this->actionName);
+        } else if (method_exists($controller, $this->actionName . 'Action')) {
+            $controllerMethod = new ReflectionMethod($controller, $this->actionName . 'Action');
         }
         if (!isset($controllerMethod)) {
             $controller->methodNotFound("{$this->namespace}\\{$this->moduleName}\\Controller\\{$this->controllerName}#{$this->actionName} method does not exist.");
@@ -159,43 +161,24 @@ class HmvcDispatcher {
     private function getDefaultMethod() {
         $controller = $this->app->get('controller');
         $method = $this->request->getMethod();
-        if ($this->app->get('router')->isHmvc() && !$this->isPathParam) {
-            if (empty($this->originActionName) && $method == 'GET') {
-                return 'index';
-            }
-            switch ($method) {
-                case 'PUT':
-                    return 'update';
-                case 'POST':
-                    return 'save';
-                case 'DELETE':
-                    return 'destory';
-                case 'GET':
-                    return 'show';
-            }
-        } else if (empty($this->originActionName)) {
+        //&& !$this->isPathParam
+        if (empty($this->originActionName) && $method == 'GET') {
             return 'index';
         } else if (method_exists($controller, $this->originActionName)) {
             return $this->originActionName;
         } else if (method_exists($controller, $method . $this->originActionName)) {
-            return $method . $this->originActionName;
-        } else {
             return strtolower($method) . ucfirst($this->originActionName);
         }
-        /*
-         * else if (!$this->isPathParam) {
-          switch ($method) {
-          case 'PUT':
-          return 'update';
-          case 'POST':
-          return 'save';
-          case 'DELETE':
-          return 'destory';
-          case 'GET':
-          return 'show';
-          }
-          }
-         */
+        switch ($method) {
+            case 'PUT':
+                return 'update';
+            case 'POST':
+                return 'save';
+            case 'DELETE':
+                return 'destory';
+            case 'GET':
+                return 'show';
+        }
     }
 
     public function matches($resourceUri) {
