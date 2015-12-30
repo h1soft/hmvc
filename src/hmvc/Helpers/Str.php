@@ -315,4 +315,23 @@ final class Str {
         return preg_match('#(http|https|ftp|ftps)://([\w-]+\.)+[\w-]+(/[\w-./?%&=]*)?#i', $str) ? false : true;
     }
 
+    /**
+     * 验证邮箱
+     */
+    public static function isEmail($str) {
+        if (empty($str)) {
+            return false;
+        }
+        $chars = "/^([a-z0-9+_]|\\-|\\.)+@(([a-z0-9_]|\\-)+\\.)+[a-z]{2,6}\$/i";
+        if (strpos($str, '@') !== false && strpos($str, '.') !== false) {
+            if (preg_match($chars, $str)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
 }
