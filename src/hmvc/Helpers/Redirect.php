@@ -59,7 +59,7 @@ class Redirect {
                 $url = base_url(app()->get('hmvcDispatch')->getPathModule()) . '/' . $url;
                 break;
             case 2:
-                $url = base_url(app()->get('hmvcDispatch')->getPathModule()) . '/' . $url;
+                $url = base_url(app()->get('hmvcDispatch')->getPathPrefix()) . '/' . $url;
                 break;
             case 3:
                 $url = base_url(app()->get('hmvcDispatch')->getPathPrefix()) . '/' . $url;
