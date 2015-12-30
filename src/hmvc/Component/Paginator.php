@@ -44,6 +44,10 @@ class Paginator {
         return $this->limit;
     }
 
+    public function getOffset() {
+        return ceil(($this->page - 1) * $this->limit);
+    }
+
     public function makeHtml($linkNum = 7, $list_class = 'pagination pagination-sm') {
         if ($this->limit == 'all' || $this->limit == 0) {
             return '';
