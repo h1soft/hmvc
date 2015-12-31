@@ -553,11 +553,11 @@ class Connection {
             if ($value instanceof Raw) {
                 $placeholders[] = $this->driver->quoteColumnName($name) . '=' . $value->raw;
                 foreach ($value->params as $key => $val) {
-                    $params[$key] = $val;
+                    $this->queryParams[$key] = $val;
                 }
             } else {
                 $placeholders[] = $this->driver->quoteColumnName($name) . '=:' . $name;
-                $params[$name] = $value;
+                $this->queryParams[$name] = $value;
             }
         }
 
