@@ -201,12 +201,37 @@ abstract class Model implements ArrayAccess {
         $model = new static;
         $model->setConnection(app()->get('db'));
         $model->db->prepare("select * from " . $model->db->tableName($model->getTable()) . " where " . $model->getPrimaryKey() . ' IN (:id)', array(
-            ':id' => implode(',', $ids)
+            'id' => implode(',', $ids)
         ));
         $model->db->execute();
         if (func_num_args() == 1) {
             return $model->db->fetchObject(get_called_class());
         }
+        return $model->db->fetchAll(\PDO::FETCH_CLASS, get_called_class());
+    }
+
+    public static function all() {
+        $model = new static;
+        $model->setConnection(app()->get('db'));
+        $model->db->prepare("select * from " . $model->db->tableName($model->getTable()));
+        $model->db->execute();
+        return $model->db->fetchAll(\PDO::FETCH_CLASS, get_called_class());
+    }
+
+    public static function findAll($params = array()) {
+        $model = new static;
+        $model->setConnection(app()->get('db'));
+        $sql = "select * from " . $model->db->tableName($model->getTable());
+        if (is_array($params) && !empty($params)) {
+            $sql .= ' WHERE ';
+            $lines = array();
+            foreach ($params as $key => $value) {
+                $lines[] = "$key=:$key";
+            }
+            $sql .= implode(' AND ', $lines);
+        }
+        $model->db->prepare($sql, $params);
+        $model->db->execute();
         return $model->db->fetchAll(\PDO::FETCH_CLASS, get_called_class());
     }
 

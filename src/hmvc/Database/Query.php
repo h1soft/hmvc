@@ -126,25 +126,10 @@ class Query {
      * @return Query
      */
     public function select($columns = '*') {
-        if ($columns == '*' || (is_string($columns) && strpos($columns, '(') !== false)) {
+        if (is_string($columns)) {
             $this->select[] = $columns;
-        } else {
-            if (!is_array($columns)) {
-                $columns = preg_split('/\s*,\s*/', trim($columns), -1, PREG_SPLIT_NO_EMPTY);
-            }
-            foreach ($columns as $i => $column) {
-                if (is_object($column)) {
-                    $columns[$i] = (string) $column;
-                } elseif (strpos($column, '(') === false) {
-                    if (preg_match('/^(.*?)(?i:\s+as\s+|\s+)(.*)$/', $column, $matches)) {
-                        $columns[$i] = $this->driver->quoteColumnName($matches[1]) . ' AS ' . $this->driver->quoteColumnName($matches[2]);
-                    } else {
-
-                        $columns[$i] = $this->driver->quoteColumnName($column);
-                    }
-                }
-            }
-            $this->select[] = implode(', ', $columns);
+        } else if (is_array($columns)) {
+            $this->select[] = implode(',', $columns);
         }
         return $this;
     }
@@ -355,7 +340,7 @@ class Query {
     public function join($type, $table, $on, $params = array()) {
         $table = $this->db->tableName($table);
         $type = strtoupper($type);
-        $this->join[] = "$type $table $on";
+        $this->join[] = "$type $table ON $on";
         $this->addParams($params);
         return $this;
     }
