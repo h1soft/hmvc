@@ -241,8 +241,12 @@ function url_for($url, $params = NULL) {
             break;
     }
 
-    if (is_array($params)) {
+    if (is_array($params) && \hmvc\Helpers\Arr::isAssoc($params)) {
         $url .= '?' . http_build_query($params);
+    } else if (is_array($params)) {
+        $url .= '/' . implode('/', $params);
+    } else if ($params) {
+        $url .= '/' . $params;
     }
     return $url;
 }
