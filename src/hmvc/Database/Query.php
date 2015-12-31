@@ -430,10 +430,10 @@ class Query {
         return $this->db->results($fetch_style);
     }
 
-    public function first() {
+    public function first($fetch_style = \PDO::FETCH_ASSOC) {
         $this->db->prepare($this->getSQL(), $this->params);
         $this->db->execute();
-        return $this->db->first();
+        return $this->db->first($fetch_style);
     }
 
     public function count() {
