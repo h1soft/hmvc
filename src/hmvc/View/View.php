@@ -35,6 +35,7 @@ use ArrayAccess;
 use hmvc\Core\Config;
 use hmvc\Constraints\Renderable;
 use hmvc\Constraints\Jsonable;
+use hmvc\Exception\NotFoundException;
 
 /**
  * Description of View
@@ -97,7 +98,7 @@ class View implements ArrayAccess, Renderable, Jsonable {
             $this->engine = new SmartyEngine($this);
             $this->fullPath = $this->path . DIRECTORY_SEPARATOR . $this->viewName . '.smarty.html';
         } else {
-            throw new \hmvc\Exception\NotFoundException('Template ' . $this->viewName . ' was not found');
+            throw new NotFoundException('Template ' . $this->viewName . ' not found');
         }
     }
 
@@ -124,7 +125,7 @@ class View implements ArrayAccess, Renderable, Jsonable {
     public function layout($layout) {
         $fullPath = $this->getTplName($layout);
         if ($fullPath == NULL) {
-            throw new \hmvc\Exception\NotFoundException('Layout ' . $layout . ' was not found');
+            throw new NotFoundException('Layout ' . $layout . ' not found');
         }
         return $this->engine->getRender($fullPath, $this->data);
     }
@@ -142,6 +143,11 @@ class View implements ArrayAccess, Renderable, Jsonable {
         if (!empty($data)) {
             $this->data = array($this->data, $data);
         }
+        return $this;
+    }
+
+    public function assign($key, $value) {
+        $this->data[$key] = $value;
         return $this;
     }
 
@@ -181,6 +187,10 @@ class View implements ArrayAccess, Renderable, Jsonable {
     }
 
     public function toJson() {
+        return json_encode($this->data);
+    }
+
+    public function __toString() {
         return json_encode($this->data);
     }
 

@@ -175,7 +175,7 @@ class HmvcDispatcher {
             case 'POST':
                 return 'save';
             case 'DELETE':
-                return 'destory';
+                return 'destroy';
             case 'GET':
                 return 'show';
         }
