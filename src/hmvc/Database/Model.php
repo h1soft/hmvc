@@ -147,9 +147,8 @@ abstract class Model implements ArrayAccess {
             $this->setNewRecord(false);
             $this->setAttribute($this->getPrimaryKey(), $this->db->lastInsertId());
         } else {
-            $pkey = $this->getPrimaryKey();
             $this->from($this->getTable())->set($this->getAttributes())
-                    ->where($pkey . "=:" . $pkey, array(':' . $pkey => $this->getKeyValue()))
+                    ->where($this->getPrimaryKey(), $this->getKeyValue())
                     ->update();
         }
         return $this;
