@@ -72,4 +72,12 @@ final class Definition {
         static::$definitions[$name] = $className;
     }
 
+    public static function register($classmaps) {
+        if (is_array($classmaps)) {
+            foreach ($classmaps as $name => $className) {
+                static::set($name, $className);
+            }
+        }
+    }
+
 }

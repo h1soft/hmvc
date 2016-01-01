@@ -104,6 +104,7 @@ class Application extends Container {
         $loader->addPrefix('App', $this->basePath . '/app');
         $loader->register();
         $this->singleton('loader', $loader);
+        Definition::register(Config::get('app.components'));
     }
 
     private function registerBaseEvent() {
