@@ -222,7 +222,7 @@ class Connection {
      */
     public function query($query, $data = null, $fetch_style = PDO::FETCH_ASSOC) {
         $this->connect();
-        $this->statement = $this->driver->prepare($query);
+        $this->statement = $this->driver->prepare($this->prepareSQL($query));
         $this->bindValues($data);
         $this->statement->execute();
         $resultset = $this->statement->fetchAll($fetch_style);
@@ -240,7 +240,7 @@ class Connection {
      */
     public function exec($statement, $data = null) {
         $this->connect();
-        $this->statement = $this->driver->prepare($statement);
+        $this->statement = $this->driver->prepare($this->prepareSQL($statement));
         $this->bindValues($data);
         $this->statement->execute();
         $this->rowcount = $this->statement->rowCount();
@@ -316,7 +316,7 @@ class Connection {
      */
     public function prepare($statement, $params = array(), array $driver_options = array()) {
         $this->connect();
-        $this->statement = $this->driver->prepare($statement, $driver_options);
+        $this->statement = $this->driver->prepare($this->prepareSQL($statement), $driver_options);
         $this->bindValues($params);
         return $this;
     }
@@ -329,7 +329,7 @@ class Connection {
      */
     public function createStatement($statement, array $driver_options = array()) {
         $this->connect();
-        return $this->driver->prepare($statement, $driver_options);
+        return $this->driver->prepare($this->prepareSQL($statement), $driver_options);
     }
 
     /**
@@ -340,7 +340,7 @@ class Connection {
      */
     public function createQuery($statement, $params = array(), array $driver_options = array()) {
         $this->connect();
-        $this->statement = $this->driver->prepare($statement, $driver_options);
+        $this->statement = $this->driver->prepare($this->prepareSQL($statement), $driver_options);
         $this->bindValues($params);
         $this->statement->execute();
         return $this->statement;
@@ -619,6 +619,21 @@ class Connection {
             return implode(' , ', $lines);
         }
         return '';
+    }
+
+    private function prepareSQL($sql) {
+        preg_match_all('/\{(.*)\}/', $sql, $matches);
+        if (empty($matches)) {
+            return $sql;
+        }
+        $patterns = array();
+        $replacements = array();
+        foreach ($matches[1] as $match) {
+            $patterns[] = '/\{' . $match . '\}/';
+            $replacements[] = $this->driver->quoteTableName($this->tableName($match));
+        }
+
+        return preg_replace($patterns, $replacements, $sql);
     }
 
 }
