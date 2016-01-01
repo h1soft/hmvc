@@ -469,12 +469,14 @@ class Connection {
             return "'" . addcslashes(str_replace("'", "''", $value), "\000\n\r\\\032") . "'";
         }
     }
-    
+
     public function quoteTable($value) {
+        $this->connect();
         return $this->driver->quoteTableName($value);
     }
-    
+
     public function quoteColumn($value) {
+        $this->connect();
         return $this->driver->quoteColumnName($value);
     }
 
