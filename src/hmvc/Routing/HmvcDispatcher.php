@@ -81,7 +81,7 @@ class HmvcDispatcher {
     public function __construct($prefix, $params, $app) {
         $this->namespace = $params['namespace'];
         $this->app = $app;
-        $this->prefix = $prefix;
+        $this->prefix = trim($prefix,'/');
         $this->hmvcParams = $params;
         $this->request = $app->request;
     }
