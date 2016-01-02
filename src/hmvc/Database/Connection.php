@@ -615,7 +615,7 @@ class Connection {
                     $this->queryParams[$name] = $value;
                 }
             }
-            return implode(' , ', $lines);
+            return implode(' AND ', $lines);
         } else if (is_string($conditions) && is_array($params)) {
             $lines = array();
             foreach ($params as $name => $value) {
@@ -626,7 +626,7 @@ class Connection {
                     $this->queryParams[$name] = $value;
                 }
             }
-            return implode(' , ', $lines);
+            return implode(' AND ', $lines);
         }
         return '';
     }
