@@ -79,7 +79,7 @@ class Paginator {
         }
 
         $class = ( $this->page == $last ) ? "disabled" : "";
-        $html .= '<li class="' . $class . '"><a href="?' . $this->buildQuery(array('limit' => $this->limit, 'page' => ( $this->page == 1 ) ? $this->page : ($this->page - 1))) . '">&raquo;</a></li>';
+        $html .= '<li class="' . $class . '"><a href="?' . $this->buildQuery(array('limit' => $this->limit, 'page' => ( $this->page == $last ) ? $this->page : ($this->page + 1))) . '">&raquo;</a></li>';
 
         $html .= '</ul>';
 
