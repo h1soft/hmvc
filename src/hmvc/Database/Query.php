@@ -421,7 +421,18 @@ class Query {
         return $this->db->first($fetch_style);
     }
 
-    public function count() {
+    public function count($columnName = '*') {
+        $sql = "SELECT count($columnName) as rowcount FROM " . $this->prepareFrom();
+        $sql .= $this->prepareJoinString();
+        $sql .= $this->prepareWhereString();
+        $sql .= $this->prepareGroupByString();
+        $sql .= $this->prepareHavingString();
+        $sql .= $this->prepareOrderByString();
+        $sql .= $this->prepareLimitString();
+        return $this->db->getScalar($sql, $this->params);
+    }
+
+    public function rowCount() {
         return $this->db->rowCount();
     }
 
