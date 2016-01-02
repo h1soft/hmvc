@@ -208,8 +208,11 @@ class Router {
      * @return boolean|\hmvc\Routing\HmvcDispatcher
      */
     public function hmvcDispatch($resourceUri) {
+        krsort($this->hmvcs);
         foreach ($this->hmvcs as $prefix => $params) {
-            if (\hmvc\Helpers\Str::startsWith($resourceUri, $prefix, false)) {
+//            if (\hmvc\Helpers\Str::startsWith($resourceUri, $prefix, false)) {
+//            if (preg_match("#^$prefix#i", $resourceUri)) {
+            if (stripos($resourceUri, $prefix) !== FALSE) {
                 $handleClass = $params['handle'];
                 $hmvc = new $handleClass($prefix, $params, $this->app);
                 $this->app->set('hmvcDispatch', $hmvc);

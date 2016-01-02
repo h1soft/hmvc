@@ -35,7 +35,10 @@ use hmvc\Core\Application;
  * 
  * @return \hmvc\Core\Application
  */
-function app() {
+function app($name = NULL) {
+    if ($name) {
+        return Application::getInstance()->get($name);
+    }
     return Application::getInstance();
 }
 
