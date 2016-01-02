@@ -215,21 +215,20 @@ class Connection {
     }
 
     /**
-     * query result
+     * 
      * @param string $query
-     * @param type $data
-     * @return array result
+     * @param array $data
+     * @return \PDOStatement
      */
-    public function query($query, $data = null, $fetch_style = PDO::FETCH_ASSOC) {
+    public function query($query, $data = null) {
         $this->connect();
         $this->statement = $this->driver->prepare($this->prepareSQL($query));
         $this->bindValues($data);
         $this->statement->execute();
-        $resultset = $this->statement->fetchAll($fetch_style);
         $this->rowcount = $this->statement->rowCount();
         $this->sqlCommandHistory[] = $this->statement->queryString;
         $this->statement->closeCursor();
-        return $resultset;
+        return $this->statement;
     }
 
     /**
@@ -272,7 +271,10 @@ class Connection {
     }
 
     public function fetchAll($fetch_style = PDO::FETCH_ASSOC, $class = NULL) {
-        return $this->statement->fetchAll($fetch_style, $class);
+        $results = $this->statement->fetchAll($fetch_style, $class);
+        $this->rowcount = $this->statement->rowCount();
+        $this->statement->closeCursor();
+        return $results;
     }
 
     public function row($fetch_style = PDO::FETCH_ASSOC) {
@@ -365,6 +367,42 @@ class Connection {
         $this->rowcount = $this->statement->rowCount();
         $this->queryParams = array();
         return $rs;
+    }
+
+    public function getAll($query, $data = null, $fetch_style = PDO::FETCH_ASSOC) {
+        $this->connect();
+        $this->statement = $this->driver->prepare($this->prepareSQL($query));
+        $this->bindValues($data);
+        $this->statement->execute();
+        $resultset = $this->statement->fetchAll($fetch_style);
+        $this->rowcount = $this->statement->rowCount();
+        $this->sqlCommandHistory[] = $this->statement->queryString;
+        $this->statement->closeCursor();
+        return $resultset;
+    }
+
+    public function getRow($query, $params = array(), $fetch_style = PDO::FETCH_ASSOC) {
+        $this->connect();
+        $this->prepare($this->prepareSQL($query), $params);
+        $this->execute();
+        $this->sqlCommandHistory[] = $this->statement->queryString;
+        return $this->first($fetch_style);
+    }
+
+    public function getOne($query, $params = array(), $fetch_style = PDO::FETCH_ASSOC) {
+        $this->connect();
+        $this->prepare($this->prepareSQL($query), $params);
+        $this->execute();
+        $this->sqlCommandHistory[] = $this->statement->queryString;
+        return $this->first($fetch_style);
+    }
+
+    public function getScalar($query, $params = array()) {
+        $this->connect();
+        $this->prepare($this->prepareSQL($query), $params);
+        $this->execute();
+        $this->sqlCommandHistory[] = $this->statement->queryString;
+        return $this->statement->fetchColumn();
     }
 
     public function begin() {
