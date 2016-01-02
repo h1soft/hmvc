@@ -31,25 +31,18 @@
 
 namespace hmvc\Date;
 
+use DateTimeZone;
 /**
- * Description of DateTime
+ * Package hmvc\Date  
+ * 
+ * Class DateTime
  *
  * @author allen <allen@w4u.cn>
  */
-class Date {
+class DateTime extends \DateTime {
 
-    public function shortDate($timestamp = NULL, $format = 'Y-m-d') {
-        if ($timestamp == NULL) {
-            $timestamp = time();
-        } else if (is_string($timestamp)) {
-            $timestamp = strtotime($timestamp);
-        }
-
-        return date($format, $timestamp);
-    }
-
-    public function now($format = 'Y-m-d H:i:s') {
-        return date($format);
+    public function __construct($time = 'now', DateTimeZone $timezone = null) {
+        parent::__construct($time, $timezone);
     }
 
 }

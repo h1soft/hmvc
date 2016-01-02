@@ -124,8 +124,12 @@ class Captcha {
     /** GD image */
     public $im;
 
-    public function __construct($config = array()) {
+    public function __construct() {
         
+    }
+
+    public function check($code) {
+        return app()->session->get($this->session_var) == $code;
     }
 
     public function CreateImage() {
@@ -139,7 +143,7 @@ class Captcha {
         $fontcfg = $this->fonts[array_rand($this->fonts)];
         $this->WriteText($text, $fontcfg);
 
-        $_SESSION[$this->session_var] = $text;
+        app()->session->set($this->session_var, $text);
 
         /** Transformations */
         if (!empty($this->lineWidth)) {
