@@ -601,7 +601,7 @@ class Query {
         if (!empty($this->limit) && empty($this->offset)) {
             return " LIMIT {$this->limit}";
         } else if ($this->offset) {
-            return " LIMIT {$this->limit},{$this->offset}";
+            return " LIMIT {$this->offset},{$this->limit}";
         }
         return '';
     }

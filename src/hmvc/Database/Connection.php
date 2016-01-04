@@ -670,7 +670,7 @@ class Connection {
     }
 
     private function prepareSQL($sql) {
-        preg_match_all('/\{(.*)\}/', $sql, $matches);
+        preg_match_all('/\{(.*?)\}/', $sql, $matches);
         if (empty($matches)) {
             return $sql;
         }

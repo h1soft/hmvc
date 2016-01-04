@@ -149,7 +149,7 @@ function xmlEncode($mixed, $domElement = null, $DOMDocument = null) {
  * @return type
  */
 function get_default($value, $default = NULL) {
-    if (isset($value)) {
+    if (!empty($value)) {
         return $value;
     }
     return $default;
