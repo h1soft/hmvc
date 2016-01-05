@@ -32,6 +32,7 @@
 namespace hmvc\Core;
 
 use hmvc\Constraints\KernelInterface;
+use hmvc\Events\Event;
 
 /**
  * Description of Console
