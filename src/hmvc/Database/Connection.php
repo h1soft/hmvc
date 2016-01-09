@@ -303,10 +303,11 @@ class Connection {
     /**
      * insert id
      * @param sequence $name
+     * @return insert ID
      */
     public function lastInsertId($name = null) {
         $this->connect();
-        $this->driver->lastInsertId($name);
+        return $this->driver->lastInsertId($name);
     }
 
     /**

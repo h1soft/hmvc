@@ -44,7 +44,7 @@ abstract class Model implements ArrayAccess {
      *
      * @var \hmvc\Database\Connection
      */
-    private $db;
+    protected $db;
 
     /**
      *
@@ -77,6 +77,11 @@ abstract class Model implements ArrayAccess {
     public function __construct(array $attributes = array()) {
         $this->db = app()->get('db');
         $this->fill($attributes);
+        $this->init();
+    }
+
+    public function init() {
+        
     }
 
     /**
