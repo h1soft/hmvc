@@ -31,6 +31,8 @@
 
 namespace hmvc\Component;
 
+use hmvc\Helpers\Unicode;
+
 /**
  * Package hmvc\Component  
  * 
