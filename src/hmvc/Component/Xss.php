@@ -32,9 +32,12 @@
 namespace hmvc\Component;
 
 use hmvc\Helpers\Unicode;
+use hmvc\Helpers\Url;
 
 /**
  * Package hmvc\Component  
+ * 
+ * from Drupal\Component\Utility\Xss
  * 
  * Class Xss
  *
