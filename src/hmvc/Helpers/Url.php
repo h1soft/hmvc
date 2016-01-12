@@ -31,6 +31,8 @@
 
 namespace hmvc\Helpers;
 
+use hmvc\Helpers\Html;
+
 /**
  * Description of Url
  *

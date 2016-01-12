@@ -31,6 +31,10 @@
 
 namespace hmvc\Helpers;
 
+if (!defined('ENT_SUBSTITUTE')) {
+    define('ENT_SUBSTITUTE', 8);
+}
+
 /**
  * Package hmvc\Helpers  
  * 

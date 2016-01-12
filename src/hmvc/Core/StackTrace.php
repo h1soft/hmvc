@@ -56,30 +56,29 @@ class StackTrace {
         $show = array();
         $debugBacktrace = debug_backtrace();
         ksort($debugBacktrace);
-        array_shift($debugBacktrace);
-        array_shift($debugBacktrace);
+//        array_shift($debugBacktrace);
+//        array_shift($debugBacktrace);
         foreach ($debugBacktrace as $k => $entry) {
-            if (!isset($entry['file'])) {
-                try {
-                    if (isset($entry['class'])) {
-                        $reflection = new \ReflectionMethod($entry['class'], $entry['function']);
-                    } else {
-                        $reflection = new \ReflectionFunction($entry['function']);
-                    }
-                    $entry['file'] = $reflection->getFileName();
-                    $entry['line'] = $reflection->getStartLine();
-                } catch (Exception $e) {
-                    continue;
-                }
-            }
+//            if (!isset($entry['file'])) {
+//                try {
+//                    if (isset($entry['class'])) {
+//                        $reflection = new \ReflectionMethod($entry['class'], $entry['function']);
+//                    } else {
+//                        $reflection = new \ReflectionFunction($entry['function']);
+//                    }
+//                    $entry['file'] = $reflection->getFileName();
+//                    $entry['line'] = $reflection->getStartLine();
+//                } catch (Exception $e) {
+//                    continue;
+//                }
+//            }
 
             $entry['file'] = str_replace(base_path(), '', $entry['file']);
             $func = isset($entry['class']) ? $entry['class'] : '';
             $func .= isset($entry['type']) ? $entry['type'] : '';
 
             if (isset($entry['function']) && $entry['function'] == 'hmvcError') {
-                $func .= 'break  <a href="#" style="color:red;" onclick="showCode();">@Source Code</a><script>function showCode(){document.getElementById("sourceCode").style.display = document.getElementById("sourceCode").style.display=="none" ? "" : "none";}</script><div id="sourceCode" style="display:none">'
-                        . self::_showSource($entry['file'], $entry['line'], 2) . '</div>';
+                $func .= self::_showSource($entry['file'], $entry['line'], 2);
             } else {
                 $func .= $entry['function'];
             }
@@ -117,9 +116,9 @@ class StackTrace {
             $errorMsg = $exception->getMessage();
         }
         $trace = $exception->getTrace();
-        $showcode = '<a href="#" style="color:red;" onclick="showCode();">@Source Code</a><script>function showCode(){document.getElementById("sourceCode").style.display = document.getElementById("sourceCode").style.display=="none" ? "" : "none";}'
-                . '</script><div id="sourceCode" style="display:none">' . self::_showSource($exception->getFile(), $exception->getLine(), 2) . '</div>';
-        array_unshift($trace, array('file' => $exception->getFile(), 'line' => $exception->getLine(), 'function' => 'break ' . $showcode));
+//        $showcode = '<a href="#" style="color:red;" onclick="showCode();">@Source Code</a><script>function showCode(){document.getElementById("sourceCode").style.display = document.getElementById("sourceCode").style.display=="none" ? "" : "none";}'
+//                . '</script><div id="sourceCode" style="display:none">' . self::_showSource($exception->getFile(), $exception->getLine(), 2) . '</div>';
+//        array_unshift($trace, array('file' => $exception->getFile(), 'line' => $exception->getLine(), 'function' => 'break ' . $showcode));
         $phpMsg = array();
         foreach ($trace as $error) {
             if (!empty($error['function'])) {
