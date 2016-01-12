@@ -58,7 +58,7 @@ class Xss {
      *
      * @see \Drupal\Component\Utility\Xss::filter()
      */
-    protected static $htmlTags = array('a', 'em', 'strong', 'cite', 'blockquote', 'code', 'ul', 'ol', 'li', 'dl', 'dt', 'dd');
+    protected static $htmlTags = array('a', 'em', 'strong', 'cite', 'blockquote', 'code', 'ul', 'ol', 'li', 'dl', 'dt', 'dd', 'div', 'p','br');
 
     /**
      * Filters HTML to prevent cross-site-scripting (XSS) vulnerabilities.
@@ -172,7 +172,7 @@ class Xss {
      *   If the element isn't allowed, an empty string. Otherwise, the cleaned up
      *   version of the HTML element.
      */
-    protected static function split($string, $html_tags, $class) {
+    public static function split($string, $html_tags, $class) {
         if (substr($string, 0, 1) != '<') {
             // We matched a lone ">" character.
             return '&gt;';
@@ -228,7 +228,7 @@ class Xss {
      * @return string
      *   Cleaned up version of the HTML attributes.
      */
-    protected static function attributes($attributes) {
+    public static function attributes($attributes) {
         $attributes_array = array();
         $mode = 0;
         $attribute_name = '';
@@ -286,7 +286,7 @@ class Xss {
                 case 2:
                     // Attribute value, a URL after href= for instance.
                     if (preg_match('/^"([^"]*)"(\s+|$)/', $attributes, $match)) {
-                        $thisval = $skip_protocol_filtering ? $match[1] : UrlHelper::filterBadProtocol($match[1]);
+                        $thisval = $skip_protocol_filtering ? $match[1] : Url::filterBadProtocol($match[1]);
 
                         if (!$skip) {
                             $attributes_array[] = "$attribute_name=\"$thisval\"";
@@ -298,7 +298,7 @@ class Xss {
                     }
 
                     if (preg_match("/^'([^']*)'(\s+|$)/", $attributes, $match)) {
-                        $thisval = $skip_protocol_filtering ? $match[1] : UrlHelper::filterBadProtocol($match[1]);
+                        $thisval = $skip_protocol_filtering ? $match[1] : Url::filterBadProtocol($match[1]);
 
                         if (!$skip) {
                             $attributes_array[] = "$attribute_name='$thisval'";
@@ -310,7 +310,7 @@ class Xss {
                     }
 
                     if (preg_match("%^([^\s\"']+)(\s+|$)%", $attributes, $match)) {
-                        $thisval = $skip_protocol_filtering ? $match[1] : UrlHelper::filterBadProtocol($match[1]);
+                        $thisval = $skip_protocol_filtering ? $match[1] : Url::filterBadProtocol($match[1]);
 
                         if (!$skip) {
                             $attributes_array[] = "$attribute_name=\"$thisval\"";
@@ -357,7 +357,7 @@ class Xss {
      * @return bool
      *   TRUE if this element needs to be removed.
      */
-    protected static function needsRemoval($html_tags, $elem) {
+    public static function needsRemoval($html_tags, $elem) {
         return !isset($html_tags[strtolower($elem)]);
     }
 

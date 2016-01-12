@@ -355,7 +355,7 @@ EOD;
             // Use C-locale for ASCII-only lowercase.
             $text = strtolower($text);
             // Case flip Latin-1 accented letters.
-            $text = preg_replace_callback('/\xC3[\x80-\x96\x98-\x9E]/', '\Drupal\Component\Utility\Unicode::caseFlip', $text);
+            $text = preg_replace_callback('/\xC3[\x80-\x96\x98-\x9E]/', '\hmvc\Helpers\Unicode::caseFlip', $text);
             return $text;
         }
     }
