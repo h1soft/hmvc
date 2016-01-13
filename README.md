@@ -24,4 +24,18 @@ RewriteRule ^ index.php [QSA,L]
 location / {
     try_files $uri $uri/ /index.php;
 }
+
+
+[OR] <br/>
+
+location / {
+        try_files $uri $uri/ /index.php$is_args$args;
+    }
+ 
+    location ~ /\.(ht|svn|git) {
+        deny all;
+    }
+location ^~ /(app|bootstrap|config|crons|vendor) {
+        deny all;
+    }
 ```
