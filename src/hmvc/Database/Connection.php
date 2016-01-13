@@ -266,7 +266,7 @@ class Connection {
         return $this->statement->fetch($fetch_style, $cursor_orientation, $cursor_offset);
     }
 
-    public function fetchObject($class_name = "stdClass", array $ctor_args = null) {
+    public function fetchObject($class_name = "stdClass", $ctor_args = array()) {
         return $this->statement->fetchObject($class_name, $ctor_args);
     }
 
