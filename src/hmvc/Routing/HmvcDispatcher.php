@@ -108,8 +108,8 @@ class HmvcDispatcher {
         $this->actionName = array_shift($router_segment);
         $this->isPathParam = array_shift($router_segment);
         $this->originActionName = $this->actionName;
-        $this->moduleName = empty($this->moduleName) ? $this->hmvcParams['module'] : ucfirst($this->moduleName);
-        $this->controllerName = empty($this->controllerName) ? $this->hmvcParams['controller'] : ucfirst($this->controllerName);
+        $this->moduleName = empty($this->moduleName) ? ucfirst($this->hmvcParams['module']) : ucfirst($this->moduleName);
+        $this->controllerName = empty($this->controllerName) ? ucfirst($this->hmvcParams['controller']) : ucfirst($this->controllerName);
         $this->actionName = empty($this->actionName) ? $this->hmvcParams['action'] : $this->actionName;
         $className = "{$this->namespace}\\{$this->moduleName}\\Controller\\{$this->controllerName}";
         if (class_exists($className)) {
