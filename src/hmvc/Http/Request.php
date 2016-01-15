@@ -154,4 +154,12 @@ class Request extends SymfonyRequest {
         return $this->session()->flash()->get($type, $default);
     }
 
+    public function post($key, $default = null) {
+        return $this->request->get($key, $default);
+    }
+
+    public function query($key, $default = null) {
+        return $this->query->get($key, $default);
+    }
+
 }
