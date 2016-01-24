@@ -59,19 +59,19 @@ class StackTrace {
 //        array_shift($debugBacktrace);
 //        array_shift($debugBacktrace);
         foreach ($debugBacktrace as $k => $entry) {
-//            if (!isset($entry['file'])) {
-//                try {
-//                    if (isset($entry['class'])) {
-//                        $reflection = new \ReflectionMethod($entry['class'], $entry['function']);
-//                    } else {
-//                        $reflection = new \ReflectionFunction($entry['function']);
-//                    }
-//                    $entry['file'] = $reflection->getFileName();
-//                    $entry['line'] = $reflection->getStartLine();
-//                } catch (Exception $e) {
-//                    continue;
-//                }
-//            }
+            if (!isset($entry['file'])) {
+                try {
+                    if (isset($entry['class'])) {
+                        $reflection = new \ReflectionMethod($entry['class'], $entry['function']);
+                    } else {
+                        $reflection = new \ReflectionFunction($entry['function']);
+                    }
+                    $entry['file'] = $reflection->getFileName();
+                    $entry['line'] = $reflection->getStartLine();
+                } catch (Exception $e) {
+                    continue;
+                }
+            }
 
             $entry['file'] = str_replace(base_path(), '', $entry['file']);
             $func = isset($entry['class']) ? $entry['class'] : '';

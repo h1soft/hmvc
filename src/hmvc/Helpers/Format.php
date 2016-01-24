@@ -68,7 +68,7 @@ class Format {
      * @return type
      */
     public static function YuanToFen($yuan = 0) {
-        return intval($yuan * 100);
+        return intval(round(number_format($yuan, 2, '.', '') * 100));
     }
 
 }

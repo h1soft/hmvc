@@ -223,24 +223,33 @@ function pp() {
     die;
 }
 
-function url_for($url, $params = NULL) {
+function url_for($url, $params = NULL, $relative = FALSE) {
     $mvc = app()->get('hmvcDispatch');
     if (!$mvc) {
         return base_url() . $url;
     }
+    if ($params == NULL || $params === FALSE || $params === TRUE) {
+        $relative = $params;
+    }
     $segments = explode('/', $url);
-    switch (count($segments)) {
+    $len = count($segments);
+    if (hmvc\Helpers\Str::startsWithChar($url, '/')) {
+        $len = 4;
+        $url = rtrim($url, '/');
+    }
+    switch ($len) {
         case 1:
-            $url = base_url($mvc->getPathModule()) . '/' . $url;
+            $url = base_url($mvc->getPathModule(), $relative) . '/' . $url;
             break;
         case 2:
-            $url = base_url($mvc->getPathPrefix()) . '/' . $url;
+            $url = base_url($mvc->getPathPrefix(), $relative) . '/' . $url;
             break;
         case 3:
-            $url = base_url($mvc->getPathPrefix()) . '/' . $url;
+            $url = base_url($mvc->getPathPrefix(), $relative) . '/' . $url;
             break;
+        case 4:
         default:
-            $url = base_url();
+            $url = base_url($url, $relative);
             break;
     }
 
