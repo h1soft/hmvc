@@ -58,8 +58,8 @@ class Format {
      * @param type $fen
      * @return type
      */
-    public static function FenToYuan($fen = 0) {
-        return number_format($fen / 100, 2);
+    public static function FenToYuan($fen = 0, $thousands_sep = ",") {
+        return number_format($fen / 100, 2, '.', $thousands_sep);
     }
 
     /**
