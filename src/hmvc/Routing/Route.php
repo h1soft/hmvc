@@ -426,13 +426,11 @@ class Route {
             call_user_func_array($mw, array($this));
         }
         app()->request->_setParams($this->getParams());
-        ob_start();
         $response = call_user_func_array($this->getCallable(), array_values($this->getParams()));
-        $content = ob_end_clean();
         if ($response instanceof \Symfony\Component\HttpFoundation\Response) {
             return $response;
         } else {
-            $response = \hmvc\Http\Response::create('test', 200);
+            $response = \hmvc\Http\Response::create($response, 200);
         }
         return $response;
     }

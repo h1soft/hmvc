@@ -70,13 +70,9 @@ class Http implements KernelInterface {
         $matchedRoutes = $this->router->getMatchedRoutes($this->request->getMethod(), $this->request->getPathInfo());
         $response = null;
         foreach ($matchedRoutes as $route) {
-            try {
-                $response = $route->dispatch();
-                if ($response) {
-                    break;
-                }
-            } catch (Exception $e) {
-                continue;
+            $response = $route->dispatch();
+            if ($response) {
+                break;
             }
         }
         if (!$response) {

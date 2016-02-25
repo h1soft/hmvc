@@ -80,7 +80,7 @@ function resources_path() {
 }
 
 function e($html) {
-    return htmlentities($html, ENT_QUOTES, 'UTF-8', false);
+    return htmlentities($html, ENT_QUOTES, 'UTF-8');
 }
 
 function object_get($object, $key, $default = null) {
