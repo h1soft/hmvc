@@ -135,6 +135,25 @@ class Router {
             );
         }
     }
+    
+    public function mvc($prefix, $params) {
+        $this->isHMVC = true;
+        if (is_string($params)) {
+            $this->hmvcs[$prefix] = array(
+                'namespace' => $params,
+                'handle' => Router::MVC_HANDLE,
+                'controller' => 'index',
+                'action' => 'index',
+            );
+        } else if (is_array($params)) {
+            $this->hmvcs[$prefix] = array(
+                'namespace' => $params['namespace'],
+                'handle' => Router::MVC_HANDLE,
+                'controller' => isset($params['controller']) ? $params['controller'] : 'index',
+                'action' => isset($params['action']) ? $params['action'] : 'index',
+            );
+        }
+    }
 
     /**
      * 

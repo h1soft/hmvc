@@ -66,8 +66,12 @@ class Route {
         $router->AddRoute("$pattern/:id", "$resource:delete")->via('DELETE');
     }
 
-    public static function scope($prefix, $params) {
-        app()->router->hmvc($prefix, $params);
+    public static function scope($prefix, $params, $mvc = false) {
+        if (!$mvc) {
+            app()->router->hmvc($prefix, $params);
+        } else {
+            app()->router->mvc($prefix, $params);
+        }
     }
 
 }

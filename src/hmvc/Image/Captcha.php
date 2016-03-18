@@ -129,7 +129,7 @@ class Captcha {
     }
 
     public function check($code) {
-        return app()->session->get($this->session_var) == $code;
+        return strtolower(app()->session->get($this->session_var)) == strtolower($code);
     }
 
     public function CreateImage() {
